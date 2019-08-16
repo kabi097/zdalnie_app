@@ -1,18 +1,32 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div class="background-banner elevation-6">
+      <add-form @browse_categories="changeMode" v-if="!browse_categories"></add-form>
+      <categories-browser @show-form="changeMode" v-else></categories-browser>
+    </div>
+    <ads-list></ads-list>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import AddForm from '@/components/AddForm.vue';
+import AdsList from '@/components/AdsList.vue';
+import CategoriesBrowser from '@/components/CategoriesBrowser.vue';
+
 
 export default {
-  name: 'home',
   components: {
-    HelloWorld,
+    AddForm,
+    AdsList,
+    CategoriesBrowser,
   },
+  data: () => ({
+    browse_categories: false,
+  }),
+  methods: {
+    changeMode() {
+      this.browse_categories = !this.browse_categories;
+    }
+  }
 };
 </script>
