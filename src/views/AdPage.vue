@@ -20,13 +20,11 @@
                 </v-toolbar-items>
               </v-toolbar>
               <v-divider></v-divider>
-              <div class="ad_properties"></div>
-              <v-list dense>
-                <v-list-item>
-                  <v-icon class="pr-4">mdi-xbox-controller</v-icon>
-                  <div class="title">Zlecę przebudowę strony internetowej</div>
-                </v-list-item>
-                <v-list-item>
+              <div class="pa-4 mb-3">
+                  <div class="headline pb-2 font-weight-medium">
+                    <v-icon class="pr-3">mdi-xbox-controller</v-icon>
+                    Zlecę przebudowę strony internetowej
+                  </div>
                   <ul style="list-style: none; padding: 0">
                   <li><v-icon class="pr-4">mdi-cash</v-icon>
                   Budżet: 400 zł</li>
@@ -37,15 +35,14 @@
                   <li><v-icon class="pr-4">mdi-account-group</v-icon>
                   Liczba zgłoszeń: 14</li>
                   </ul>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-subtitle>Opis</v-list-item-subtitle>
-                    
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <p class="mx-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium eius libero ab, assumenda atque unde illo ipsa odit, rem ducimus ut repudiandae minima, quo ad repellendus eum fugiat doloribus voluptatem?</p>
+                  
+                  <div class="body-2 py-3 font-weight-medium">Opis</div>
+                  <div class="font-weight-regular">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt corporis consequuntur sint, error dolor id saepe. Nisi itaque modi aliquam nesciunt sed, ipsam hic voluptas, quibusdam soluta cupiditate commodi natus? 
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga illo voluptates saepe, est laudantium autem nisi molestias magni facere, explicabo libero cumque officiis minima quas nostrum inventore velit a eius!
+                    lorem
+                  </div>
+              </div>
             </v-card>
             <replies-list></replies-list>
           </v-flex>
@@ -64,7 +61,5 @@ export default {
 </script>
 
 <style>
-  .ad_properties {
-    
-  }
+
 </style>
