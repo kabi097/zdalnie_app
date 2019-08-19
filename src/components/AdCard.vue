@@ -7,13 +7,13 @@
         <div class="body-2 my-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam ipsam
           eligendi libero praesentium veniam deleniti id, quidem, quaerat nulla ex tenetur quisquam
           delectus </div>
-        <div class="my-2">
-          <v-chip small class="mr-1">HTML</v-chip>
-          <v-chip small class="mr-1">CSS</v-chip>
-          <v-chip small class="mr-1">PHP</v-chip>
-          <v-chip small class="mr-1">Laravel</v-chip>
-          <v-chip small class="mr-1">REST API</v-chip>
-        </div>
+          <v-chip-group column>
+            <v-chip small class="mr-1">HTML</v-chip>
+            <v-chip small class="mr-1">CSS</v-chip>
+            <v-chip small class="mr-1">PHP</v-chip>
+            <v-chip small class="mr-1">Laravel</v-chip>
+            <v-chip small class="mr-1">REST API</v-chip>
+          </v-chip-group>
       </v-flex>
       <v-flex md5>
         <v-layout wrap fill-height align-content-space-between justify-space-between>
