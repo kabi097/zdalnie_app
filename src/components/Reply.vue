@@ -7,7 +7,7 @@
                         <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="User avatar">
                     </v-avatar>
                     <div :class="this.$vuetify.breakpoint.mdAndUp ? 'title' : 'font-weight-medium'">Jan Kowalski</div>
-                    <v-chip label small color="warning" class="ma-1 mx-4 mx-md-0">Firma</v-chip>    
+                    <v-chip label small :outlined="!this.$vuetify.breakpoint.mdAndUp" color="warning" class="ma-1 mx-4 mx-md-0">Firma</v-chip>    
                     <div class="ml-auto d-md-none">
                           Cena: <span class="title mx-2">400 zł</span>
                           <span class="subtitle-1 mr-4">za całość</span>
@@ -18,11 +18,16 @@
             <v-flex md6 class="pt-md-4">
                 <div class="body-2 font-weight-medium d-none d-md-block">Odpowiedź</div>
                 <v-divider class="my-1 d-none d-md-block"></v-divider>
-                  <div class="mx-1 mx-md-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed debitis deleniti rem consequatur architecto aliquam, soluta unde amet culpa accusantium molestiae sapiente recusandae ducimus, quos fuga minus ullam. Laborum, minima.</div>
-                <v-chip-group class="pb-2 pt-3 pt-md-0">
-                    <v-chip outlined>Wystawiam fakturę VAT</v-chip>
-                    <v-chip outlined>Umowa o dzieło</v-chip>
-                </v-chip-group>
+                <div class="mx-1 mx-md-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed debitis deleniti rem consequatur architecto aliquam, soluta unde amet culpa accusantium molestiae sapiente recusandae ducimus, quos fuga minus ullam. Laborum, minima.</div>
+                <div class="d-flex justify-space-between align-baseline">
+                  <v-chip-group class="pb-2 pt-3 pt-md-0">
+                      <v-chip outlined>Wystawiam fakturę VAT</v-chip>
+                      <v-chip outlined>Umowa o dzieło</v-chip>
+                  </v-chip-group>
+                  <div class="mr-2 d-md-none">
+                    <Menu :items="items"></Menu>
+                  </div>
+                </div>
             </v-flex>
             <v-flex md3 class="text-center pt-md-4">
                 <v-layout column style="height: 100%">
@@ -35,21 +40,8 @@
                           <div class="subtitle-1">za całość</div>
                         </div>
                     </v-flex>
-                    <v-flex xs12 md2 align-self-end class="mr-2 mb-3">
-                      <v-menu offset-y>
-                        <template v-slot:activator="{ on }">
-                          <v-btn rounded v-on="on" light icon>
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item v-for="(item, index) in items" :key="index" @click="">
-                            <v-list-item-title>
-                              <v-icon class="mr-3" v-text="item.icon"></v-icon>{{ item.title }}
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
+                    <v-flex xs12 md2 align-self-end class="mr-2 mb-3 d-none d-md-block">
+                        <Menu :items="items"></Menu>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -57,7 +49,12 @@
     </v-card>
 </template>
 <script>
+import Menu from '@/components/Menu.vue';
+
 export default {
+    components: {
+      Menu
+    },
     data() {
       return {
         items: [
