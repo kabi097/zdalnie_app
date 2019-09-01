@@ -11,22 +11,25 @@
             <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
           </v-flex>
           <v-flex md3> 
-            
             <v-card class="mr-md-4 mb-3">
-              <div class="pt-12 text-center" style="height: 100px; background-color: blue">
-                <div class="pt-5 d-inline-block">
-                  <v-avatar size="70" color="grey lighten-4">
-                    <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="User avatar">
-                  </v-avatar>
+              <div class="d-flex d-md-block align-center">
+                <div class="pt-md-12 text-center card-color-blue" :class="this.$vuetify.breakpoint.mdAndUp ? 'card-full' : ''">
+                  <div class="py-4 d-md-inline-block">
+                    <v-avatar :size="this.$vuetify.breakpoint.mdAndUp ? 70 : 45" color="grey lighten-4 mx-4">
+                      <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="User avatar">
+                    </v-avatar>
+                  </div>
                 </div>
-              </div>
-              <div class="text-center mt-12">
-                <div class="display-1">Jan Kowalski</div>
-                <v-chip label small color="primary" class="ma-2">Osoba prywatna</v-chip>
-                <div class="py-3 caption">
-                  Zarejestrowany: 3 miesiące temu
-                  <v-divider class="my-2"></v-divider>
-                  Dodano: 20-08-2019 22:31
+                <div class="text-center mt-md-12 d-flex d-md-block">
+                  <div class="mx-2 py-2">
+                    <div :class="this.$vuetify.breakpoint.mdAndUp ? 'display-1' : 'subtitle-1 font-weight-medium'">Jan Kowalski</div>
+                    <v-chip label small color="primary" class="ma-md-2">Osoba prywatna</v-chip>
+                  </div>
+                  <div class="py-3 mr-auto mx-4 caption d-block d-md-block">
+                    <div>Zarejestrowany: 3 miesiące temu</div>
+                    <v-divider class="my-1 my-md-2"></v-divider>
+                    <div>Dodano: 20-08-2019 22:31</div>
+                  </div>
                 </div>
               </div>
             </v-card>
@@ -123,5 +126,16 @@ export default {
 </script>
 
 <style>
+    .card-color-blue {
+        border-left: 3px solid blue;
+    }
 
+    .card-color-yellow {
+        border-left: 3px solid yellow;
+    }
+
+    .card-full {
+      height: 100px; 
+      background-color: blue;
+    }
 </style>
