@@ -1,7 +1,7 @@
 <template>
     <v-card class="my-2" min-height="180">
-        <v-layout wrap align-stretch justify-center>
-            <v-flex sm3 class="text-center py-sm-1">   
+        <v-row no-gutters align="stretch" justify="center">
+            <v-col sm="3" class="text-center py-sm-1">   
                 <div class="d-flex align-center d-sm-block">
                     <v-avatar :size="this.$vuetify.breakpoint.smAndUp ? 70 : 40" color="grey lighten-4" class="my-3 mx-4 mx-sm-0">
                         <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="User avatar">
@@ -14,8 +14,8 @@
                     </div>
                 </div>
                 <v-divider class="d-block d-sm-none mb-2"></v-divider>
-            </v-flex>
-            <v-flex sm6 class="pt-sm-4">
+            </v-col>
+            <v-col sm="6" class="pt-sm-4">
                 <div class="body-2 font-weight-medium d-none d-sm-block">Odpowiedź</div>
                 <v-divider class="my-1 d-none d-sm-block"></v-divider>
                 <div class="mx-1 mx-sm-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed debitis deleniti rem consequatur architecto aliquam, soluta unde amet culpa accusantium molestiae sapiente recusandae ducimus, quos fuga minus ullam. Laborum, minima.</div>
@@ -28,10 +28,10 @@
                     <Menu :items="items"></Menu>
                   </div>
                 </div>
-            </v-flex>
-            <v-flex sm3 class="text-center pt-sm-4">
-                <v-layout column style="height: 100%">
-                    <v-flex sm10 d-none d-sm-block>
+            </v-col>
+            <v-col sm="3" class="text-center pt-sm-4">
+                <v-row class="flex-column flex-nowrap" style="height: 100%">
+                    <v-col cols="10" d-none d-sm-block>
                         <div class="body-2 font-weight-medium d-none d-sm-block">Cena</div>
                         <v-divider class="my-1 d-none d-sm-block"></v-divider>
                         <div class="d-none d-sm-block">
@@ -39,13 +39,13 @@
                           <div class="title pt-2 mx-3 mx-sm-0">400 zł</div>
                           <div class="subtitle-1">za całość</div>
                         </div>
-                    </v-flex>
-                    <v-flex xs12 sm2 align-self-end class="mr-2 mb-3 d-none d-sm-block">
+                    </v-col>
+                    <v-col cols="12" sm="2" align-self-end class="mr-2 mb-3 d-none d-sm-block">
                         <Menu :items="items"></Menu>
-                    </v-flex>
-                </v-layout>
-            </v-flex>
-        </v-layout>
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row>
     </v-card>
 </template>
 <script>

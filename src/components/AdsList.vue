@@ -2,8 +2,8 @@
     <div>
         <v-container class="mt-3">
             <div class="headline mb-5">Przeglądaj zlecenia</div>
-            <v-layout wrap>
-                <v-flex md3 class="pr-3 mb-3">
+            <v-row>
+                <v-col cols="12" md="3" class="pr-3 mb-3">
                     <v-card>
                         <v-card-title>
                             Filtrowanie
@@ -13,14 +13,14 @@
                             <v-treeview :items="items"></v-treeview>
                             <v-form ref="filter_form" lazy-validation>
                               <div class="subtitle-2 mt-4">Budżet</div> 
-                              <v-layout>
-                                  <v-flex xs6 class="my-1">
+                              <v-row>
+                                  <v-col xs6 class="my-1">
                                       <v-text-field :rules="min_rules" v-bind="min_value" placeholder="Od"></v-text-field>
-                                  </v-flex>
-                                  <v-flex xs6 class="my-1">
+                                  </v-col>
+                                  <v-col xs6 class="my-1">
                                       <v-text-field :rules="max_rules" v-bind="max_value" placeholder="Do"></v-text-field>
-                                  </v-flex>
-                              </v-layout>
+                                  </v-col>
+                              </v-row>
                               
                               <div class="subtitle-2 mt-4">Umiejętności</div> 
                               <v-combobox
@@ -43,15 +43,15 @@
                             </v-form>
                         </v-card-text>
                     </v-card>
-                </v-flex>
-                <v-flex md9>
+                </v-col>
+                <v-col cols="12" md="9">
                     <div class="body-1 mb-4 px-2">Wszystkie zlecenia</div>
                     <ad-card></ad-card>
                     <ad-card></ad-card>
                     <ad-card></ad-card>
                     <ad-card></ad-card>
-                </v-flex>
-            </v-layout>
+                </v-col>
+            </v-row>
         </v-container>
     </div>
 </template>
@@ -123,10 +123,6 @@ export default {
 }
 </script>
 <style>
-    .card-color {
-        border-left: 3px solid red;
-    }
-
     .clear { 
       clear: both;
     }
