@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-layout min-width="600px" wrap align-center>
-          <v-flex md6 class="my-sm-10">
+        <v-row min-width="600px" no-gutters align="center">
+          <v-col md="6" class="my-sm-10">
             <div class="display-3 text-sm-center font-weight-bold text-md-left white--text shadow-text1">
               Pracuj zdalnie! Znajdź zlecenie dla siebie!
             </div>
@@ -9,18 +9,18 @@
             <div class="text-sm-center text-md-left">
               <v-btn color="primary" @click="$emit('show-form')">Dodaj ogłoszenie</v-btn>
             </div>
-          </v-flex>
-          <v-flex md6>
-              <v-layout wrap>
-                  <v-flex xs6 md4 class="pa-2" v-for="category in categories" :key="category.id">
+          </v-col>
+          <v-col md="6">
+              <v-row no-gutters>
+                  <v-col xs="6" md="4" class="pa-2" v-for="category in categories" :key="category.id">
                         <v-btn large block class="left elevation10">
                             <v-icon left>{{ category.icon }}</v-icon>
                             <span class="text-none">{{ category.name }}</span>
                         </v-btn>
-                  </v-flex>
-              </v-layout>
-          </v-flex>
-        </v-layout>
+                  </v-col>
+              </v-row>
+          </v-col>
+        </v-row>
     </v-container>
 </template>
 <script>
