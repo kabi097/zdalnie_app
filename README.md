@@ -1,4 +1,4 @@
-# vuetify-test
+# zdalnie_app
 
 ## Project setup
 ```
