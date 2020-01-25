@@ -1,16 +1,16 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+import Vue from 'vue'
+import Vuetify from 'vuetify/lib'
 // import 'material-design-icons-iconfont/dist/material-design-icons.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@mdi/font/css/materialdesignicons.css'; // Ensure you are using css-loader
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 
-Vue.use(Vuetify);
+Vue.use(Vuetify)
 
 export default new Vuetify({
   theme: {
-    dark: false,
+    dark: false
   },
   icons: {
-    iconfont: 'mdi',
-  },
-});
+    iconfont: 'mdi'
+  }
+})
