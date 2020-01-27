@@ -35,6 +35,8 @@
                                 type="password"
                                 prepend-icon="mdi-key"
                                 :rules="passwordRules"
+                                @keydown="validate"
+                                @input="validate"
                                 label="Hasło"
                                 required />
                         </v-col>
@@ -44,7 +46,7 @@
                                 name="passwordRepeat"
                                 type="password"
                                 prepend-icon="mdi-key"
-                                :rules="passwordRepeatRules"
+                                :rules="[((v) => v === this.password || 'Hasła muszą być identyczne')]"
                                 label="Powtórz hasło"
                                 required />
                         </v-col>
@@ -55,7 +57,6 @@
                 </v-form>
             </v-card-text>
         </v-card>
-    </div>
     </v-container>
 </template>
 <script>
@@ -77,10 +78,6 @@ export default {
     passwordRules: [
         v => v.length >= 8 || 'Hasło musi mieć co najmniej 8 znaków',
     ],
-    passwordRepeatRules: [
-        v => v.length >= 8 || 'Hasło musi mieć co najmniej 8 znaków',
-        v => v === password || 'Hasła muszą być identyczne',
-    ]
   }),
 
   methods: {
