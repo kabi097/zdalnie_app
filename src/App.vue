@@ -1,13 +1,42 @@
 <template>
   <v-app>
+    <v-navigation-drawer app temporary v-model="drawer">
+      <v-list
+        dense
+        nav
+      >
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title>Dodaj ogłoszenie</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title>Przglądaj ogłoszenia</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title>Twój profil</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title>Wyloguj</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <v-app-bar app color="primary" dark>
+      <v-app-bar-nav-icon v-if="!this.$vuetify.breakpoint.smAndUp" @click="drawer = !drawer" />
+      <v-spacer v-if="!this.$vuetify.breakpoint.smAndUp" />
       <v-toolbar-title>
-        <v-btn flat color="primary" class="text-none headline">
+          <v-btn flat color="primary" class="text-none headline" elevation="0">
           <v-icon class="mx-1">mdi-mouse</v-icon><span class="font-weight-bold">zdalnie</span><span>.com.pl</span>
         </v-btn>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items>
+      <v-spacer />
+      <v-toolbar-items v-if="this.$vuetify.breakpoint.smAndUp">
         <v-btn text>Dodaj ogłoszenie</v-btn>
         <v-btn text>Przeglądaj ogłoszenia</v-btn>
         <v-btn text>Twój profil</v-btn>
@@ -20,7 +49,7 @@
         <div class="d-sm-flex flex-sm-row-reverse">
           <v-btn
             icon
-            :block="this.$vuetify.breakpoint.smAndUp ? false : true"
+            :block="!this.$vuetify.breakpoint.smAndUp"
             @click="showRegisterForm = false"
           >
             <v-icon>mdi-close</v-icon>
@@ -45,6 +74,7 @@ export default {
   },
   data: () => ({
     showRegisterForm: true,
+    drawer: null,
   }),
 };
 </script>
