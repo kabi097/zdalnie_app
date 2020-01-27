@@ -10,15 +10,15 @@
                         </v-card-title>
                         <v-card-text>
                             <div class="subtitle-2 mt-4">Kategoria</div> 
-                            <v-treeview :items="items"></v-treeview>
+                            <v-treeview :items="items" />
                             <v-form ref="filter_form" lazy-validation>
                               <div class="subtitle-2 mt-4">Budżet</div> 
                               <v-row>
                                   <v-col xs6 class="my-1">
-                                      <v-text-field :rules="min_rules" v-bind="min_value" placeholder="Od"></v-text-field>
+                                      <v-text-field :rules="min_rules" v-bind="min_value" placeholder="Od" />
                                   </v-col>
                                   <v-col xs6 class="my-1">
-                                      <v-text-field :rules="max_rules" v-bind="max_value" placeholder="Do"></v-text-field>
+                                      <v-text-field :rules="max_rules" v-bind="max_value" placeholder="Do" />
                                   </v-col>
                               </v-row>
                               
@@ -31,25 +31,25 @@
                               light
                               small-chips deletable-chips
                               label="Wybierz umiejętności"
-                              ></v-combobox>
+                              />
 
                               <div class="subtitle-2 mt-4">Sortowanie</div> 
-                              <v-select :items="['Tytuł', 'Najnowsze', 'Do końca']"></v-select>
+                              <v-select :items="['Tytuł', 'Najnowsze', 'Do końca']" />
 
                               <div class="subtitle-2 mt-4">Pokaż na stronie</div> 
-                              <v-select :items="[10, 30, 50]"></v-select>
+                              <v-select :items="[10, 30, 50]" />
                               <v-btn text class="float-right mt-6">Filtruj</v-btn>
-                              <div class="clear"></div>
+                              <div class="clear" />
                             </v-form>
                         </v-card-text>
                     </v-card>
                 </v-col>
                 <v-col cols="12" md="9">
                     <div class="body-1 mb-4 px-2">Wszystkie zlecenia</div>
-                    <ad-card></ad-card>
-                    <ad-card></ad-card>
-                    <ad-card></ad-card>
-                    <ad-card></ad-card>
+                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
+                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
+                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
+                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
                 </v-col>
             </v-row>
         </v-container>

@@ -2,11 +2,16 @@
   <v-card>
     <v-row align="stretch" class="card-color mb-3 mx-0 px-0">
       <v-col cols="12" xs="12" md="7" class="pr-4">
-        <div class="title"><v-icon class="pr-2">mdi-xbox-controller</v-icon>Zlecę przebudowę strony internetowej</div>
-        <div class="overline text-none my-1">NOWOŚĆ - od 3 dni</div>
-        <div class="body-2 my-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam ipsam
-          eligendi libero praesentium veniam deleniti id, quidem, quaerat nulla ex tenetur quisquam
-          delectus </div>
+        <div class="title">
+          <v-icon class="pr-2">mdi-xbox-controller</v-icon>
+          <router-link class="title-link-active" :to="link">{{ title }}</router-link>
+        </div>
+        <router-link class="text-link-active" :to="link">
+          <div class="overline text-none my-1 active">NOWOŚĆ - od 3 dni</div>
+          <div class="body-2 my-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam ipsam
+            eligendi libero praesentium veniam deleniti id, quidem, quaerat nulla ex tenetur quisquam
+            delectus </div>
+        </router-link>
           <v-chip-group column>
             <v-chip small class="mr-1">HTML</v-chip>
             <v-chip small class="mr-1">CSS</v-chip>
@@ -47,6 +52,16 @@ import Menu from '@/components/Menu.vue';
 export default {
     components: {
       Menu
+    },
+    props: {
+      link: {
+        type: String,
+        default: ''
+      },
+      title: {
+        type: String,
+        default: ''
+      }
     },
     data() {
       return {

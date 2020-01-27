@@ -1,5 +1,13 @@
 <template>
-    <v-card class="my-2" min-height="180">
+    <v-card class="my-2" :elevation="(link) ? 3 : 2" min-height="180">
+        <div v-if="link" class="grey lighten-2 px-3 py-2 d-flex">
+            <v-icon left class="pr-2">mdi-xbox-controller</v-icon>
+            <div>
+              <router-link class="body-1 title-link-active" :to="link">Zlecę przebudowę strony internetowej</router-link>
+              <div class="overline text-none active">Opublikowano 26-01-2020</div>
+            </div>
+        </div>
+        <v-divider v-if="link" />
         <v-row no-gutters align="stretch" justify="center">
             <v-col sm="3" class="text-center py-sm-1">   
                 <div class="d-flex align-center d-sm-block">
@@ -54,6 +62,12 @@ import Menu from '@/components/Menu.vue';
 export default {
     components: {
       Menu
+    },
+    props: {
+      link: {
+        type: String,
+        default: ''
+      }
     },
     data() {
       return {
