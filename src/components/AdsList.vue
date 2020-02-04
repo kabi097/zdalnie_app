@@ -46,10 +46,7 @@
                 </v-col>
                 <v-col cols="12" md="9">
                     <div class="body-1 mb-4 px-2">Wszystkie zlecenia</div>
-                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
-                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
-                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
-                    <ad-card title="Zlecę stworzenie strony internetowej" link="/example" />
+                    <ad-card v-for="post in posts" :key="post.id" title="Zlecę stworzenie strony internetowej" link="/example" />
                 </v-col>
             </v-row>
         </v-container>
@@ -61,6 +58,14 @@ import AdCard from '@/components/AdCard.vue';
 export default {
     components: {
         AdCard,
+    },
+    computed: {
+      posts() {
+        return this.$store.getters.allPosts
+      }
+    },
+    mounted () {
+      this.$store.dispatch('getPosts')
     },
     data: () => ({
       max_value: "",

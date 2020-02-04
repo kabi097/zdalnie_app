@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="background-banner elevation-6">
-      <add-form @browse_categories="changeMode" v-if="!browse_categories"></add-form>
-      <categories-browser @show-form="changeMode" v-else></categories-browser>
+      <add-form v-if="!browse_categories" @browse_categories="changeMode" />
+      <categories-browser v-else @show-form="changeMode" />
     </div>
-    <ads-list></ads-list>
+    <ads-list />
   </div>
 </template>
 

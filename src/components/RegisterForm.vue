@@ -9,7 +9,7 @@
                     <v-row>
                         <v-col cols="12" sm="6">
                             <v-text-field
-                                v-model="name"
+                                v-model="username"
                                 name="username"
                                 prepend-icon="mdi-account"
                                 :rules="nameRules"
@@ -35,8 +35,8 @@
                                 type="password"
                                 prepend-icon="mdi-key"
                                 :rules="passwordRules"
-                                @keydown="validate"
-                                @input="validate"
+                                @keydown="$refs.registerForm.validate()"
+                                @input="$refs.registerForm.validate()"
                                 label="Hasło"
                                 required />
                         </v-col>
@@ -52,7 +52,7 @@
                         </v-col>
                     </v-row>
                     <v-card-actions class="d-flex justify-end">
-                        <v-btn color="primary" :disabled="!valid" class="mr-4" @click="validate">Potwierdź</v-btn>
+                        <v-btn :disabled="loadingRegister || !valid" :loading="loadingRegister" color="primary" class="mr-4" @click="validate">Potwierdź</v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card-text>
@@ -63,9 +63,10 @@
 export default {
   data: () => ({
     valid: true,
-    name: '',
+    username: '',
     email: '',
     password: '',
+    // loadingRegister: false,
     passwordRepeat: '',
     nameRules: [
       v => !!v || 'Pole jest wymagane',
@@ -79,21 +80,24 @@ export default {
         v => v.length >= 8 || 'Hasło musi mieć co najmniej 8 znaków',
     ],
   }),
-
+  computed: {
+    loadingRegister () {
+      return this.$store.state.loadingRegister
+    }
+  },
   methods: {
-    validate() {
+    validate () {
       if (this.$refs.registerForm.validate()) {
-        this.snackbar = true
-        console.log('OK')
-      } else {
-        console.log('ERROR')
+        this.$store.dispatch('registerUser', {
+          email: this.email,
+          username: this.username,
+          publicEmail: this.email,
+          publicPhone: '459 785 325',
+          publicAddress: 'ul. Nowa 5, 98-547 Warszawa',
+          type: true,
+          password: this.password
+        })
       }
-    },
-    reset() {
-      this.$refs.form.reset()
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation()
     },
   },
 }

@@ -15,12 +15,12 @@
             <v-list-item-title>Przglądaj ogłoszenia</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item v-if="loggedIn" link>
           <v-list-item-content>
             <v-list-item-title>Twój profil</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item v-if="loggedIn" link @click="$store.dispatch('logout')">
           <v-list-item-content>
             <v-list-item-title>Wyloguj</v-list-item-title>
           </v-list-item-content>
@@ -39,24 +39,42 @@
       <v-toolbar-items v-if="this.$vuetify.breakpoint.smAndUp">
         <v-btn text>Dodaj ogłoszenie</v-btn>
         <v-btn text>Przeglądaj ogłoszenia</v-btn>
-        <v-btn text>Twój profil</v-btn>
-        <v-btn text>Wyloguj</v-btn>
+        <v-btn v-if="loggedIn" text>Twój profil</v-btn>
+        <v-btn v-if="loggedIn" text @click="$store.dispatch('logout')">Wyloguj</v-btn>
+        <v-btn v-if="!loggedIn" text @click="$store.dispatch('openLoginForm')">Zaloguj się</v-btn>
+        <v-btn v-if="!loggedIn" text @click="$store.dispatch('openRegisterForm')">Zarejestruj się</v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-content>
       <router-view></router-view>
-      <v-overlay :value="showRegisterForm">
+      <v-overlay :value="this.$store.state.showRegisterForm || this.$store.state.showLoginForm">
         <div class="d-sm-flex flex-sm-row-reverse">
           <v-btn
             icon
             :block="!this.$vuetify.breakpoint.smAndUp"
-            @click="showRegisterForm = false"
+            @click="$store.dispatch('toggleOverlay', false)"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <RegisterForm />
+          <RegisterForm v-if="this.$store.state.showRegisterForm" />
+          <LoginForm v-if="this.$store.state.showLoginForm" />
         </div>
       </v-overlay>
+      <v-snackbar
+        v-model="snackbarShow"
+        :color="snackbarColor"
+        loading="10000"
+      >
+        {{ $store.state.snackbarText }}
+        <v-btn
+          color="pink"
+          text
+          light
+          @click="$store.dispatch('setSnackbar', '')"
+        >
+          Zamknij
+        </v-btn>
+      </v-snackbar>
     </v-content>
     <v-footer>
       Copyright 2019
@@ -65,17 +83,37 @@
 </template>
 
 <script>
-import RegisterForm from '@/components/RegisterForm.vue';
+import RegisterForm from '@/components/RegisterForm.vue'
+import LoginForm from '@/components/LoginForm.vue'
 
 export default {
   name: 'App',
   components: {
     RegisterForm,
+    LoginForm
   },
   data: () => ({
     showRegisterForm: true,
+    snackbarShow: false,
     drawer: null,
+    snackbarColor: 'error'
   }),
+  computed: {
+    loggedIn () { 
+      return this.$store.getters.loggedIn
+    }
+  },
+  created: function () {
+    this.$store.subscribe((mutation, state) => {
+      if (state.snackbarText !== '') {
+        this.snackbarShow = true
+        this.snackbarColor = this.$store.state.snackbarColor
+        // this.$store.dispatch('setSnackbar', '')
+      } else {
+        this.snackbarShow = false
+      }
+    })
+  }
 };
 </script>
 <style lang="css">
