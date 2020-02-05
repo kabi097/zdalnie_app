@@ -26,11 +26,12 @@
                                 type="password"
                                 prepend-icon="mdi-key"
                                 label="Hasło"
+                                @keydown.enter="validate"
                                 required />
                         </v-col>
                     </v-row>
                     <v-card-actions class="d-flex justify-end">
-                        <v-btn :disabled="loadingLogin || !valid" :loading="loadinglogin" color="primary" class="mr-4" @click="validate">Potwierdź</v-btn>
+                        <v-btn :disabled="loadingLogin || !valid" :loading="loadingLogin" color="primary" class="mr-4" @click="validate">Potwierdź</v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card-text>
@@ -44,14 +45,14 @@ export default {
     username: '',
     email: '',
     password: '',
-    loadinglogin: false,
+    // loadinglogin: false,
     emailRules: [
       v => !!v || 'Pole jest wymagane',
       v => /.+@.+\..+/.test(v) || 'E-mail musi być poprawny',
     ]
   }),
   computed: {
-    loadinglogin () {
+    loadingLogin () {
       return this.$store.state.loadinglogin
     }
   },

@@ -18,11 +18,13 @@ export default new Router({
       component: Home
     },
     {
-      path: '/example',
-      name: 'example',
-      // route level code-splitting]
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
+      path: '/category/:category_id',
+      name: 'category',
+      component: Home
+    },
+    {
+      path: '/post/:post_id',
+      name: 'post',
       component: AdPage
     },
     {

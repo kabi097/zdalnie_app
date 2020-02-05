@@ -6,7 +6,7 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-item v-for="(item, index) in items" :key="index" @click="">
+      <v-list-item v-for="(item, index) in items" :key="index" @click="item.click()">
         <v-list-item-title>
           <v-icon class="mr-3" v-text="item.icon"></v-icon>{{ item.title }}
         </v-list-item-title>
@@ -19,7 +19,8 @@ export default {
     props: {
         items: {
             type: Array,
-            required: false
+            required: false,
+            default: () => []
         }
     }
 }

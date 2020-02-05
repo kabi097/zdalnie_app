@@ -4,13 +4,11 @@
       <v-col cols="12" xs="12" md="7" class="pr-4">
         <div class="title">
           <v-icon class="pr-2">mdi-xbox-controller</v-icon>
-          <router-link class="title-link-active" :to="link">{{ title }}</router-link>
+          <router-link class="title-link-active" :to="link">{{ post.title }}</router-link>
         </div>
         <router-link class="text-link-active" :to="link">
-          <div class="overline text-none my-1 active">NOWOŚĆ - od 3 dni</div>
-          <div class="body-2 my-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam ipsam
-            eligendi libero praesentium veniam deleniti id, quidem, quaerat nulla ex tenetur quisquam
-            delectus </div>
+          <div class="overline text-none my-1 active">Aktywne od {{ post.createdAtAgo.replace(/temu/, '') }}</div>
+          <div class="body-2 my-2">{{ post.description }}</div>
         </router-link>
           <v-chip-group column>
             <v-chip small class="mr-1">HTML</v-chip>
@@ -26,20 +24,20 @@
             <v-row no-gutters>
               <v-col xs="6" sm="4" md="4" class="px-md-3">
                 <div class="grey--text">Budżet</div>
-                <div>600 zł</div>
+                <div>{{ post.budget }}zł</div>
               </v-col>
               <v-col xs="6" sm="4" md="4" class="px-md-3">
                 <div class="grey--text">Liczba ofert</div>
-                <div>14</div>
+                <div>{{ post.replies.length }}</div>
               </v-col>
               <v-col xs="6" sm="4" md="4">
                 <div class="grey--text">Pozostało</div>
-                <div>6 dni</div>
+                <div>{{ post.leftDays.replace(/za|temu/, '') }}</div>
               </v-col>
             </v-row>
           </v-col>
           <v-col xs="2" class="col-auto ml-auto">
-            <Menu :items="items"></Menu>
+            <Menu :items="items" />
           </v-col>
         </v-row>
       </v-col>
@@ -54,23 +52,36 @@ export default {
       Menu
     },
     props: {
+      post: {
+        type: Object,
+        default: () => {}
+      },
+      showAdminOptions: {
+        type: Boolean,
+        default: false
+      },
       link: {
         type: String,
-        default: ''
-      },
-      title: {
-        type: String,
-        default: ''
+        default: '#'
       }
     },
     data() {
       return {
         items: [
-          { title: 'Kopiuj link', icon: 'mdi-link' },
-          { title: 'Edytuj', icon: 'mdi-pencil' },
-          { title: 'Usuń', icon: 'mdi-trash-can-outline' },
-          { title: 'Zgłoś', icon: 'mdi-alert-circle-outline' },
+          { title: 'Kopiuj link', icon: 'mdi-link', click: () => console.log('Copy link') },
+          { title: 'Edytuj', icon: 'mdi-pencil', click: () => console.log('aaa') },
+          { 
+            title: 'Usuń', 
+            icon: 'mdi-trash-can-outline', 
+            click: () => this.$store.dispatch('deletePost', this.id) 
+          },
+          { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
         ],
+      }
+    },
+    methods: {
+      deletePost () {
+        this.$store.dispatch('deletePost', id)
       }
     }
 }

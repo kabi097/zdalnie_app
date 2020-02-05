@@ -31,7 +31,7 @@
       <v-app-bar-nav-icon v-if="!this.$vuetify.breakpoint.smAndUp" @click="drawer = !drawer" />
       <v-spacer v-if="!this.$vuetify.breakpoint.smAndUp" />
       <v-toolbar-title>
-          <v-btn flat color="primary" class="text-none headline" elevation="0">
+        <v-btn @click="navigateHome" color="primary" class="text-none headline" elevation="0">
           <v-icon class="mx-1">mdi-mouse</v-icon><span class="font-weight-bold">zdalnie</span><span>.com.pl</span>
         </v-btn>
       </v-toolbar-title>
@@ -85,6 +85,7 @@
 <script>
 import RegisterForm from '@/components/RegisterForm.vue'
 import LoginForm from '@/components/LoginForm.vue'
+import axios from 'axios'
 
 export default {
   name: 'App',
@@ -103,6 +104,12 @@ export default {
       return this.$store.getters.loggedIn
     }
   },
+  mounted () {
+    this.$store.dispatch('getCategories')
+    if (this.$store.state.token) {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$store.state.token
+    } 
+  },
   created: function () {
     this.$store.subscribe((mutation, state) => {
       if (state.snackbarText !== '') {
@@ -113,6 +120,15 @@ export default {
         this.snackbarShow = false
       }
     })
+  },
+  methods: {
+    navigateHome () {
+      if (this.$route.path !== '/') {
+        this.$router.push('/')
+      } else {
+        location.reload()
+      }
+    }
   }
 };
 </script>
