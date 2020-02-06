@@ -47,7 +47,7 @@
     </v-app-bar>
     <v-content>
       <router-view></router-view>
-      <v-overlay :value="this.$store.state.showRegisterForm || this.$store.state.showLoginForm">
+      <v-overlay :value="this.$store.state.showRegisterForm || this.$store.state.showLoginForm || this.$store.state.showSelectCategory">
         <div class="d-sm-flex flex-sm-row-reverse">
           <v-btn
             icon
@@ -58,6 +58,7 @@
           </v-btn>
           <RegisterForm v-if="this.$store.state.showRegisterForm" />
           <LoginForm v-if="this.$store.state.showLoginForm" />
+          <SelectCategory v-if="this.$store.state.showSelectCategory" />
         </div>
       </v-overlay>
       <v-snackbar
@@ -85,13 +86,15 @@
 <script>
 import RegisterForm from '@/components/RegisterForm.vue'
 import LoginForm from '@/components/LoginForm.vue'
+import SelectCategory from '@/components/SelectCategory.vue'
 import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
     RegisterForm,
-    LoginForm
+    LoginForm,
+    SelectCategory
   },
   data: () => ({
     showRegisterForm: true,

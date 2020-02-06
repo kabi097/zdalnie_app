@@ -46,7 +46,7 @@
                 </v-col>
                 <v-col cols="12" md="9">
                     <div class="body-1 mb-4 px-2">Wszystkie zlecenia</div>
-                    <ad-card v-for="post in posts" :key="post['@id']" :post="post" link="/example" />
+                    <ad-card v-for="post in posts" :key="post['@id']" :post="post" :link="'/post/'+post['@id'].match(/\d+/)" />
                     <div v-if="posts.length==0" class="d-block title py-5 text-center grey lighten-2">Brak wpisów do wyswietlenia</div>
                 </v-col>
             </v-row>
@@ -78,7 +78,11 @@ export default {
       }
     },
     mounted () {
-      this.$store.dispatch('getPosts')
+      if (this.$route.name == 'category') {
+        this.$store.dispatch('getPosts', this.$route.path)
+      } else {
+        this.$store.dispatch('getPosts')
+      }
     },
     data: () => ({
       max_value: '',

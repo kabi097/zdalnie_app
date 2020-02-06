@@ -2,7 +2,7 @@
   <v-container>
       <v-row no-gutters>
           <v-col md="3" order="0" order-md="0"> 
-            <v-btn text class="my-2 text-none text-left font-weight-regular">
+            <v-btn @click="$router.push('/')" text class="my-2 text-none text-left font-weight-regular">
               <v-icon left>mdi-arrow-left</v-icon>
               Wróć do listy wyszukiwań
             </v-btn>
@@ -11,7 +11,7 @@
             <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
           </v-col>
           <v-col md="3" order="2" order-md="2"> 
-            <ProfileCard/>
+            <ProfileCard :user="post.user" :date="post.createdAt" />
             <div class="mr-md-4">
               <v-btn block class="mb-3" color="warning">Edytuj</v-btn>
               <v-btn block class="mb-3" color="red">Kasuj</v-btn>
@@ -33,42 +33,40 @@
               <v-divider></v-divider>
               <div class="pa-4 mb-3">
                   <div class="headline pb-2 font-weight-medium">
-                    <v-icon class="pr-3">mdi-xbox-controller</v-icon>
-                    Zlecę przebudowę strony internetowej
+                    <v-icon class="pr-3">{{ post.category.icon }}</v-icon>
+                    {{ post.title }}
                   </div>
                   <ul style="list-style: none; padding: 0">
                   <li><v-icon class="pr-4">mdi-cash</v-icon>
-                  Budżet: 400 zł</li>
+                  Budżet: {{ post.budget }} zł</li>
 
                   <li><v-icon class="pr-4">mdi-calendar-range</v-icon>
-                  Pozostało: 4 dni</li>
+                  Pozostało: {{ post.leftDays.replace('/za|temu/', '') }} </li>
 
                   <li><v-icon class="pr-4">mdi-account-group</v-icon>
-                  Liczba zgłoszeń: 14</li>
+                  Liczba zgłoszeń: {{ post.replies.length }}</li>
                   </ul>
                   
                   <div class="body-2 py-3 font-weight-medium">Opis</div>
                   <div class="font-weight-regular pb-2">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt corporis consequuntur sint, error dolor id saepe. Nisi itaque modi aliquam nesciunt sed, ipsam hic voluptas, quibusdam soluta cupiditate commodi natus? 
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga illo voluptates saepe, est laudantium autem nisi molestias magni facere, explicabo libero cumque officiis minima quas nostrum inventore velit a eius!
-                    lorem
+                    {{ post.description }}
                   </div>
-                  <div class="body-2 py-3 font-weight-medium">Umiejętności</div>
+                  <div class="body-2 py-3 font-weight-medium">Kategoria</div>
                   <div class="font-weight-regular pb-2">
                     <v-chip-group>
-                        <v-chip small class="mr-1">HTML</v-chip>
-                        <v-chip small class="mr-1">CSS</v-chip>
+                        <v-chip class="mr-1">{{ post.category.name }}</v-chip>
+                        <!-- <v-chip small class="mr-1">CSS</v-chip>
                         <v-chip small class="mr-1">PHP</v-chip>
                         <v-chip small class="mr-1">Laravel</v-chip>
-                        <v-chip small class="mr-1">REST API</v-chip>
-                    </v-chip-group>
+                        <v-chip small class="mr-1">REST API</v-chip> -->
+                    </v-chip-group> 
                   </div>
               </div>
             </v-card>
-            <reply-form></reply-form>
-            <reply></reply>
-            <reply></reply>
-            <reply></reply>
+            <reply-form v-if="(post.user['@id'].match(/\d+/) !== $store.state.currentUser.match(/\d+/)) && !(post.replies.length > 0 && post.replies.find(x => x.user['@id'].match(/\d+/) == $store.state.currentUser.match(/\d+/)))"
+              @submit-reply="sendReply"
+             />
+            <reply v-for="reply in post.replies" :key="reply['@id']" :reply="reply" />
           </v-col>
       </v-row>
   </v-container>
@@ -83,24 +81,44 @@ export default {
   components: {
     ReplyForm,
     Reply,
-    ProfileCard,
+    ProfileCard
+  },
+  computed: {
+    post () {
+      return this.$store.getters.postData
+    }
+  },
+  methods: {
+    sendReply (data) {
+      console.log(this.post.replies)
+      // data.post = this.post['@id']
+      // data.price = parseInt(data.price, 10)
+      // this.$store.dispatch('sendReply', data)
+    }
+  },
+  // watch: {
+  //   $route: function (to, from) {
+  //     if (to.name=='category') {
+  //       this.$store.dispatch('getPosts', to.path)
+  //     } else {
+  //       this.$store.dispatch('getPosts')
+  //     }
+  //   }
+  // },
+  mounted () {
+      this.$store.dispatch('getPostData', this.$route.path)
   },
   data: () => ({
     breadcrumbs: [{
         text: 'Strona główna',
         disabled: false,
-        href: 'breadcrumbs_dashboard',
+        href: '#',
       },
       {
-        text: 'Informatyka',
+        text: 'Posty',
         disabled: false,
-        href: 'breadcrumbs_link_1',
-      },
-      {
-        text: 'Witryny i aplikacje internetowe',
-        disabled: false,
-        href: 'breadcrumbs_link_2',
-      },
+        href: '#',
+      }
     ],
   }),
 }

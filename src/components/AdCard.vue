@@ -11,11 +11,11 @@
           <div class="body-2 my-2">{{ post.description }}</div>
         </router-link>
           <v-chip-group column>
-            <v-chip small class="mr-1">HTML</v-chip>
-            <v-chip small class="mr-1">CSS</v-chip>
+            <v-chip small class="mr-1">{{ post.category.name }}</v-chip>
+            <!-- <v-chip small class="mr-1">CSS</v-chip>
             <v-chip small class="mr-1">PHP</v-chip>
             <v-chip small class="mr-1">Laravel</v-chip>
-            <v-chip small class="mr-1">REST API</v-chip>
+            <v-chip small class="mr-1">REST API</v-chip> -->
           </v-chip-group>
       </v-col>
       <v-col cols="12" md="5">
@@ -73,7 +73,7 @@ export default {
           { 
             title: 'Usuń', 
             icon: 'mdi-trash-can-outline', 
-            click: () => this.$store.dispatch('deletePost', this.id) 
+            click: () => this.$store.dispatch('deletePost', this.post['@id'])
           },
           { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
         ],
