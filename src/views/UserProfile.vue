@@ -2,7 +2,7 @@
   <v-container>
       <v-row no-gutters>
           <v-col cols="6" md="3" order="0" order-md="0"> 
-            <v-btn text class="my-2 text-none text-left font-weight-regular">
+            <v-btn class="my-2 text-none text-left font-weight-regular" text @click="$router.back()">
               <v-icon left>mdi-arrow-left</v-icon>
               Wróć do listy wyszukiwań
             </v-btn>

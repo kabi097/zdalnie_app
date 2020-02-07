@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
+import qs from 'qs'
 
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://127.0.0.1:8000'
@@ -13,7 +14,15 @@ export default new Vuex.Store({
     categories: [],
     parameters: {
       page: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      isPublished: true,
+      budget: {
+        gte: null,
+        lte: null
+      },
+      order: {
+        createdAt: 'desc'
+      }
     },
     paginationLength: 1,
     // currentCategory: '',
@@ -46,7 +55,8 @@ export default new Vuex.Store({
     currentUser: state => state.currentUser,
     postData: state => state.postData,
     isAdmin: state => state.isAdmin,
-    paginationLength: state => state.paginationLength
+    paginationLength: state => state.paginationLength,
+    queryParams: state => state.parameters
     // currentCategory: state => state.currentCategory
   },
   mutations: {
@@ -102,6 +112,15 @@ export default new Vuex.Store({
     },
     SET_ITEMS_PER_PAGE: (state, number) => {
       state.parameters.itemsPerPage = number
+    },
+    SET_MIN_BUDGET: (state, min) => {
+      state.parameters.budget.gte = min
+    },
+    SET_MAX_BUDGET: (state, max) => {
+      state.parameters.budget.lte = max
+    },
+    SET_ORDER: (state, order) => {
+      state.parameters.order = order
     }
     // SET_CURRENT_CATEGORY: (state, category) => {
     //   state.currentCategory = category
@@ -110,7 +129,11 @@ export default new Vuex.Store({
   actions: {
     getPosts ({ state, commit }, category) {
       const postAddress = (category) ? '/api/categories/' + category.match(/\d+/)[0] + '/posts' : '/api/posts'
-      axios.get(postAddress, { params: state.parameters }).then(response => {
+      axios.get(postAddress, { 
+          params: state.parameters,
+          paramsSerializer: params => {
+            return qs.stringify(params)
+      }}).then(response => {
         commit('GET_POSTS', response.data['hydra:member'])
         if (response.data['hydra:totalItems']) {
           commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / this.state.parameters.itemsPerPage)+1)
@@ -205,6 +228,15 @@ export default new Vuex.Store({
     },
     setItemsPerPage ({ commit, state }, number) {
       commit('SET_ITEMS_PER_PAGE', number)
+    },
+    setOrder ({ commit, state }, order) {
+      commit('SET_ORDER', order)
+    },
+    setMinBudget ({ commit, state }, min) {
+      commit('SET_MIN_BUDGET', min)
+    },
+    setMaxBudget ({ commit, state }, max) {
+      commit('SET_MAX_BUDGET', max)
     },
     logout ({ state, commit }) {
       localStorage.removeItem('access_token')

@@ -2,7 +2,7 @@
   <v-container>
       <v-row no-gutters>
           <v-col cols="6" md="3" order="0" order-md="0"> 
-            <v-btn @click="$router.push('/')" text class="my-2 text-none text-left font-weight-regular">
+            <v-btn @click="$router.back()" text class="my-2 text-none text-left font-weight-regular">
               <v-icon left>mdi-arrow-left</v-icon>
               Wróć do listy wyszukiwań
             </v-btn>
@@ -96,12 +96,12 @@ export default {
     breadcrumbs: [{
         text: 'Strona główna',
         disabled: false,
-        href: '#',
+        href: '#'
       },
       {
         text: 'Ogłoszenia',
         disabled: false,
-        href: '#',
+        href: '#'
       }
     ],
   }),
@@ -162,14 +162,14 @@ export default {
       console.log(this.allPosts)
       const currentIndex = this.allPosts.findIndex(post => post['@id'] == this.post['@id'])
       if (currentIndex > 0) {
-        this.$router.push('/post/' + this.allPosts[currentIndex-1]['@id'].match(/\d+/)[0])
+        this.$router.push('/post/' + this.allPosts[currentIndex - 1]['@id'].match(/\d+/)[0])
         this.$store.dispatch('getPostData', this.$route.path)
       }
     },
     nextPost () {
       const currentIndex = this.allPosts.findIndex(post => post['@id'] == this.post['@id'])
-      if (currentIndex >= 0 && currentIndex < this.allPosts.length-1) {
-        this.$router.push('/post/' + this.allPosts[currentIndex+1]['@id'].match(/\d+/)[0])
+      if (currentIndex >= 0 && currentIndex < this.allPosts.length - 1) {
+        this.$router.push('/post/' + this.allPosts[currentIndex + 1]['@id'].match(/\d+/)[0])
         this.$store.dispatch('getPostData', this.$route.path)
       }
     }

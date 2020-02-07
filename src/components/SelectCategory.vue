@@ -2,7 +2,7 @@
      <v-container>
         <v-card light elevation="24">
             <v-card-title class="grey lighten-2 title">
-                Zaloguj się
+                Wybierz kategorię
             </v-card-title>
             <v-card-text>
                 <v-form ref="selectCategory" v-model="valid">
