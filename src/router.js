@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import AdPage from './views/AdPage.vue'
 import UserProfile from './views/UserProfile.vue'
 import NewAdvertisement from './views/NewAdvertisement.vue'
+import NotFound from './views/NotFound.vue'
 
 Vue.use(Router)
 
@@ -18,8 +19,18 @@ export default new Router({
       component: Home
     },
     {
+      path: '/page/:page',
+      name: 'pagination_home',
+      component: Home
+    },
+    {
       path: '/category/:category_id',
       name: 'category',
+      component: Home
+    },
+    {
+      path: '/category/:category_id/page/:page',
+      name: 'pagination_category',
       component: Home
     },
     {
@@ -36,6 +47,11 @@ export default new Router({
       path: '/new_advertisement',
       name: 'new_advertisement',
       component: NewAdvertisement
+    },
+    {
+      path: '/*',
+      name: 'not-found',
+      component: NotFound
     }
   ]
 })

@@ -11,6 +11,11 @@ export default new Vuex.Store({
     posts: [],
     postData: null,
     categories: [],
+    parameters: {
+      page: 1,
+      itemsPerPage: 10
+    },
+    paginationLength: 1,
     // currentCategory: '',
     token: localStorage.getItem('access_token') || null,
     isAdmin: false,
@@ -18,6 +23,8 @@ export default new Vuex.Store({
     showRegisterForm: false,
     showLoginForm: false,
     showSelectCategory: false,
+    showAddForm: false,
+    showCategoriesBrowser: false,
     loadingRegister: false,
     loadingLogin: false,
     snackbarText: '',
@@ -35,8 +42,11 @@ export default new Vuex.Store({
   getters: {
     allPosts: state => state.posts,
     allCategories: state => state.categories,
-    loggedIn: state => state.token !== null,
-    postData: state => state.postData
+    loggedIn: state => !!state.token && !!state.currentUser,
+    currentUser: state => state.currentUser,
+    postData: state => state.postData,
+    isAdmin: state => state.isAdmin,
+    paginationLength: state => state.paginationLength
     // currentCategory: state => state.currentCategory
   },
   mutations: {
@@ -61,6 +71,12 @@ export default new Vuex.Store({
     SET_FORM_LOGIN: (state, form) => {
       state.showLoginForm = form
     },
+    SET_ADD_FORM: (state, addForm) => {
+      state.showAddForm = addForm
+    },
+    SET_CATEGORIES_BROWSER: (state, browser) => {
+      state.showCategoriesBrowser = browser
+    },
     SET_NEW_POST_CATEGORY: (state, category) => {
       state.newPostCategory = category
     },
@@ -77,21 +93,37 @@ export default new Vuex.Store({
     },
     SET_NEW_POST: (state, post) => {
       state.newPost = post
+    },
+    SET_PAGINATION_LENGTH: (state, length) => {
+      state.paginationLength = length
+    },
+    SET_PAGE: (state, page) => {
+      state.parameters.page = page
+    },
+    SET_ITEMS_PER_PAGE: (state, number) => {
+      state.parameters.itemsPerPage = number
     }
     // SET_CURRENT_CATEGORY: (state, category) => {
     //   state.currentCategory = category
     // }
   },
   actions: {
-    getPosts ({ commit }, category) {
-      const postAddress = (!!category) ? '/api/categories/' + category.match(/\d+/) + '/posts' : '/api/posts'
-      axios.get(postAddress).then(response => {
+    getPosts ({ state, commit }, category) {
+      const postAddress = (category) ? '/api/categories/' + category.match(/\d+/)[0] + '/posts' : '/api/posts'
+      axios.get(postAddress, { params: state.parameters }).then(response => {
         commit('GET_POSTS', response.data['hydra:member'])
+        if (response.data['hydra:totalItems']) {
+          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / this.state.parameters.itemsPerPage)+1)
+        } else {
+          commit('SET_PAGINATION_LENGTH', 1)
+        }
       })
     },
     getPostData ({ commit, state }, post_id) {
-      axios.get('/api/posts/' + post_id.match(/\d+/)).then(response => {
+      axios.get('/api/posts/' + post_id.match(/\d+/)[0],).then(response => {
         commit('GET_POST_DATA', response.data)
+      }).catch(() => {
+        window.location = '/404'
       })
     },
     getCategories ({ commit, state }) {
@@ -138,6 +170,8 @@ export default new Vuex.Store({
       commit('SET_FORM_LOGIN', toggle)
       commit('SET_FORM_REGISTER', toggle)
       commit('SET_SELECT_CATEGORY', toggle)
+      commit('SET_ADD_FORM', toggle)
+      commit('SET_CATEGORIES_BROWSER', toggle)
     },
     openLoginForm ({ commit, state }) {
       commit('SET_FORM_LOGIN', true)
@@ -148,11 +182,29 @@ export default new Vuex.Store({
     openSelectCategory ({ commit, state }) {
       commit('SET_SELECT_CATEGORY', true)
     },
+    openAddForm ({ commit, state }) {
+      commit('SET_ADD_FORM', true)
+    },
+    closeAddForm ({ commit, state }) {
+      commit('SET_ADD_FORM', false)
+    },
+    openCategoriesBrowser ({ commit, state }) {
+      commit('SET_CATEGORIES_BROWSER', true)
+    },
+    closeCategoriesBrowser ({ commit, state }) {
+      commit('SET_CATEGORIES_BROWSER', false)
+    },
     setSnackbar ({ commit, state }, text, color) {
       commit('SET_SNACKBAR', text, (color !== '') ? color : 'error')
       // setTimeout(() => {
       //   commit('SET_SNACKBAR', '', 'error')
       // }, 9999)
+    },
+    setPage ({ commit, state }, page) {
+      commit('SET_PAGE', page)
+    },
+    setItemsPerPage ({ commit, state }, number) {
+      commit('SET_ITEMS_PER_PAGE', number)
     },
     logout ({ state, commit }) {
       localStorage.removeItem('access_token')
@@ -161,7 +213,7 @@ export default new Vuex.Store({
       commit('SET_USER', null)
     },
     deletePost ({ state, commit }, id) {
-      axios.delete('/api/posts/' + id.match(/\d+/)).then(response => {
+      axios.delete('/api/posts/' + id.match(/\d+/)[0]).then(response => {
         this.dispatch('setSnackbar', 'Pomyślnie usunięto wpis', '')
         // location.reload(
         commit('GET_POSTS', this.state.posts.filter(post => post['@id'] !== id))
@@ -170,39 +222,62 @@ export default new Vuex.Store({
         console.log(error)
       })
     },
+    deleteReply ({ state, commit }, reply) {
+      axios.delete('/api/replies/' + reply.replyId.match(/\d+/)[0]).then(response => {
+        this.dispatch('setSnackbar', 'Pomyślnie usunięto wpis', '')
+        this.dispatch('getPostData', reply.postId)
+      }).catch((error) => {
+        this.dispatch('setSnackbar', error.response, '')
+      })
+    },
     setNewPostCategory ({ commit, state }, category) {
+      console.log(category)
       commit('SET_NEW_POST_CATEGORY', category)
-      this.dispatch('createPost')
+      this.dispatch('createPost', state.newPost)
     },
     createPost ({ state, commit }, post) {
-      if (!post && !state.newPost) return
-      if (state.token && state.currentUser) {
-        if (!state.newPostCategory) {
-          commit('SET_NEW_POST', post)
-          this.dispatch('openSelectCategory')
+      if (!!post && !!state.newPost) {
+        if (state.token && state.currentUser) {
+          if (!state.newPostCategory) {
+            console.log('ok 41')
+            commit('SET_NEW_POST', post)
+            this.dispatch('openSelectCategory')
+          } else {
+            console.log('ok 42')
+            const newPost = state.newPost
+            newPost.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
+            newPost.category = state.newPostCategory
+            axios.post('/api/posts', newPost).then(response => {
+              commit('SET_NEW_POST', null)
+              commit('SET_NEW_POST_CATEGORY', null)
+              commit('SET_SELECT_CATEGORY', false)
+              window.location = '/post/' + response.data['@id'].match(/\d+/)[0]
+            }).catch(error => {
+              this.dispatch('setSnackbar', error.response.title, '')
+            })
+          }
         } else {
-          const newPost = state.newPost
-          newPost.user = '/api/users/' + state.currentUser.match(/\d+/)
-          newPost.category = state.newPostCategory
-          axios.post('/api/posts', newPost).then(response => {
-            commit('SET_NEW_POST', null)
-            commit('SET_NEW_POST_CATEGORY', null)
-            commit('SET_SELECT_CATEGORY', false)
-            window.location = '/post/' + response.data['@id'].match(/\d+/)
-          }).catch(error => {
-            this.dispatch('setSnackbar', error.response.title, '')
-          })
+          commit('SET_NEW_POST', post)
+          this.dispatch('openLoginForm')
         }
-      } else {
-        commit('SET_NEW_POST', post)
-        this.dispatch('openLoginForm')
       }
     },
     sendReply ({ state, commit }, reply) {
       reply.isPublished = true
-      reply.user = '/api/users/' + state.currentUser.match(/\d+/)
+      reply.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
       axios.post('/api/replies', reply).then(response => {
         this.dispatch('getPostData', reply.post)
+        this.dispatch('setSnackbar', 'Twój wpis został dodany', '')
+      }).catch(error => {
+        this.dispatch('setSnackbar', error.response.title, '')
+      })
+    },
+    editReply ({ state, commit }, reply) {
+      reply.isPublished = true
+      reply.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
+      axios.put('/api/replies/' + reply.replyId.match(/\d+/)[0], reply).then(response => {
+        this.dispatch('getPostData', reply.post)
+        this.dispatch('setSnackbar', 'Twój wpis pomyślnie edytowany', '')
       }).catch(error => {
         this.dispatch('setSnackbar', error.response.title, '')
       })

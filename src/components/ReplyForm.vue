@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-form ref="replyForm" v-model="valid" class="pa-2 my-2">
-            <div class="title ma-2">Dodaj odpowiedź</div>
+            <div class="title ma-2">{{ edit ? 'Edytuj odpowiedź' : 'Dodaj odpowiedź'}}</div>
             <v-textarea v-model="content" filled label="Wpisz tutaj" :rules="contentRules" required />
             <v-row no-gutters>
                 <v-col xs="6">
@@ -22,7 +22,8 @@
                     </v-chip-group>
                 </v-col>
                 <v-col cols="12" sm="3" class="text-right mt-2 mr-md-4">
-                    <v-btn @click="validateForm" color="primary" :block="!this.$vuetify.breakpoint.smAndUp">Wyślij</v-btn>
+                    <v-btn class="mx-2" v-if="edit" @click="$emit('close-edit')">Anuluj</v-btn>
+                    <v-btn @click="validateForm" :color="edit ? 'warning' : 'primary'" :block="!this.$vuetify.breakpoint.smAndUp">{{ edit ? 'Zapisz' : 'Dodaj'}}</v-btn>
                 </v-col>
             </v-row>
         </v-form>
@@ -30,6 +31,33 @@
 </template>
 <script>
 export default {
+    props: {
+        editContent: {
+            type: String,
+            default: '',
+            required: false
+        },
+        editPrice: {
+            type: String,
+            default: '',
+            required: false
+        },
+        editType: {
+            type: String,
+            default: '',
+            required: false
+        },
+        edit: {
+            type: Boolean,
+            default: false,
+            required: false
+        }
+    },
+    mounted () {
+        this.content = this.editContent
+        this.type = this.editType
+        this.price = this.editPrice
+    },
     data: () => ({
         options: [],
         price: '',

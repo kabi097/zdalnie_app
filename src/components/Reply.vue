@@ -71,16 +71,24 @@ export default {
       reply: {
         type: Object,
         default: () => {}
+      },
+      postId: {
+        type: String,
+        default: ''
       }
     },
     data() {
       return {
         items: [
-          { title: 'Kopiuj link', icon: 'smi-link' },
-          { title: 'Edytuj', icon: 'smi-pencil' },
-          { title: 'Usuń', icon: 'smi-trash-can-outline' },
-          { title: 'Zgłoś', icon: 'smi-alert-circle-outline' },
-        ],
+          { title: 'Kopiuj link', icon: 'mdi-link', click: () => console.log('Copy link') },
+          { title: 'Edytuj', icon: 'mdi-pencil', click: () => this.$emit('edit-reply', this.reply['@id']) },
+          { 
+            title: 'Usuń', 
+            icon: 'mdi-trash-can-outline', 
+            click: () => this.$store.dispatch('deleteReply', { postId: this.postId, replyId: this.reply['@id'] })
+          },
+          { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
+        ]
       }
     }
 }
