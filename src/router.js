@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import AdPage from './views/AdPage.vue'
 import UserProfile from './views/UserProfile.vue'
-import NewAdvertisement from './views/NewAdvertisement.vue'
 import NotFound from './views/NotFound.vue'
 import About from './views/About.vue'
 
@@ -48,11 +47,6 @@ export default new Router({
       path: '/about',
       name: 'about',
       component: About
-    },
-    {
-      path: '/new_advertisement',
-      name: 'new_advertisement',
-      component: NewAdvertisement
     },
     {
       path: '/*',
