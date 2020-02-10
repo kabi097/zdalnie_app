@@ -5,6 +5,7 @@ import AdPage from './views/AdPage.vue'
 import UserProfile from './views/UserProfile.vue'
 import NewAdvertisement from './views/NewAdvertisement.vue'
 import NotFound from './views/NotFound.vue'
+import About from './views/About.vue'
 
 Vue.use(Router)
 
@@ -42,6 +43,11 @@ export default new Router({
       path: '/profile',
       name: 'profile',
       component: UserProfile
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About
     },
     {
       path: '/new_advertisement',
