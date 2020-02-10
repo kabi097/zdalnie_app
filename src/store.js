@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode'
 import qs from 'qs'
 
 Vue.use(Vuex)
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = 'http://192.168.0.4:8000'
 
 export default new Vuex.Store({
   state: {

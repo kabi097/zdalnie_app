@@ -8,7 +8,7 @@
         </div>
         <router-link class="text-link-active" :to="link">
           <div class="overline text-none my-1 active">Aktywne od {{ post.createdAtAgo.replace(/temu/, '') }}</div>
-          <div class="body-2 my-2">{{ post.description }}</div>
+          <div class="body-2 my-2 crop">{{ post.description }}</div>
         </router-link>
           <v-chip-group column>
             <v-chip small class="mr-1">{{ post.category.name }}</v-chip>
@@ -91,4 +91,9 @@ export default {
       border-left: 3px solid red;
   }
 
+  .crop {
+	overflow:hidden;
+	height:60px;
+	line-height:80px;
+   }
 </style>
