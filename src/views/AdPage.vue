@@ -67,7 +67,7 @@
               @submit-reply="sendReply"
              />
              <reply-form v-else-if="!!userReplyId" @close-edit="closeEdit" @submit-reply="sendReply" :edit="true" :editContent="content" :editPrice="price" :editType="type" />
-             <reply v-for="reply in post.replies" :key="reply['@id']" v-if="!userReplyId && reply['@id'].match(/\d+/)[0] != currentUser" :reply="reply" :post-id="post['@id']" @edit-reply="openEdit" />
+             <reply v-for="reply in post.replies" :key="reply['@id']" :reply="reply" :post-id="post['@id']" @edit-reply="openEdit" />
              <div v-if="post.replies.length==0" class="d-block py-5 text-center grey lighten-2">
                <p class="title mt-2">Brak odpowiedzi</p>
                <p class="subtitle-1" v-if="!loggedIn">Zaloguj się, aby dodać odpowiedź</p>

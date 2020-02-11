@@ -11,15 +11,17 @@
         <v-row no-gutters align="stretch" justify="center">
             <v-col sm="3" class="text-center py-sm-1">   
                 <div class="d-flex align-center d-sm-block">
+                  <router-link :to="{ name: 'profile', params: { user_id: reply.user['@id'].match(/\d+/)[0] }}" class="text-link-active">
                     <v-avatar :size="this.$vuetify.breakpoint.smAndUp ? 70 : 40" color="grey lighten-4" class="my-3 mx-4 mx-sm-0">
                         <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="User avatar">
                     </v-avatar>
-                    <div :class="this.$vuetify.breakpoint.smAndUp ? 'title' : 'font-weight-medium'">{{ reply.user.username }}</div>
-                    <v-chip label small :outlined="!this.$vuetify.breakpoint.smAndUp" :color="reply.user.type ? 'warning' : 'primary'" class="ma-1 mx-4 mx-sm-0 text-no-wrap">{{ reply.user.type ? 'Firma' : 'Osoba prywatna' }}</v-chip>    
-                    <div class="ml-auto d-sm-none">
-                          Cena: <span class="title mx-2">{{ reply.price }} zł</span>
-                          <span class="subtitle-1 mr-4">{{ reply.type }}</span>
-                    </div>
+                    <div :class="this.$vuetify.breakpoint.smAndUp ? 'title' : 'font-weight-medium'">{{ reply.user.login }}</div>
+                  </router-link>
+                  <v-chip label small :outlined="!this.$vuetify.breakpoint.smAndUp" :color="reply.user.type ? 'warning' : 'primary'" class="ma-1 mx-4 mx-sm-0 text-no-wrap">{{ reply.user.type ? 'Firma' : 'Osoba prywatna' }}</v-chip>    
+                  <div class="ml-auto d-sm-none">
+                        Cena: <span class="title mx-2">{{ reply.price }} zł</span>
+                        <span class="subtitle-1 mr-4">{{ reply.type }}</span>
+                  </div>
                 </div>
                 <v-divider class="d-block d-sm-none mb-2"></v-divider>
             </v-col>

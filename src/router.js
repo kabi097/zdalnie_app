@@ -39,7 +39,7 @@ export default new Router({
       component: AdPage
     },
     {
-      path: '/profile',
+      path: '/user/:user_id',
       name: 'profile',
       component: UserProfile
     },

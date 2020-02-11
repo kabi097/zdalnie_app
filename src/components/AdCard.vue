@@ -92,8 +92,7 @@ export default {
   }
 
   .crop {
-	overflow:hidden;
-	height:60px;
-	line-height:80px;
-   }
+    overflow:hidden;
+    height:60px;
+  }
 </style>

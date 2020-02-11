@@ -15,7 +15,7 @@
             <v-list-item-title>Przglądaj ogłoszenia</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="loggedIn" link>
+        <v-list-item v-if="loggedIn" link :to="{ name: 'profile', params: { user_id: $store.state.currentUser }}">
           <v-list-item-content>
             <v-list-item-title>Twój profil</v-list-item-title>
           </v-list-item-content>
@@ -49,7 +49,7 @@
       <v-toolbar-items v-if="this.$vuetify.breakpoint.smAndUp">
         <v-btn text @click="openAddForm">Dodaj ogłoszenie</v-btn>
         <v-btn text @click="openCategoriesBrowser">Przeglądaj ogłoszenia</v-btn>
-        <v-btn v-if="loggedIn" text >Twój profil</v-btn>
+        <v-btn v-if="loggedIn" text :to="{ name: 'profile', params: { user_id: $store.state.currentUser }}">Twój profil</v-btn>
         <v-btn v-if="loggedIn" text @click="$store.dispatch('logout')">Wyloguj</v-btn>
         <v-btn v-if="!loggedIn" text @click="openLogin">Zaloguj się</v-btn>
         <v-btn v-if="!loggedIn" text @click="openRegister">Zarejestruj się</v-btn>
@@ -121,7 +121,10 @@ export default {
   computed: {
     loggedIn () { 
       return this.$store.getters.loggedIn
-    }
+    },
+    currentUser () {
+      return this.$store.getters.currentUser
+    },
   },
   mounted () {
     this.$store.dispatch('getCategories')

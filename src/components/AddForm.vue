@@ -53,7 +53,7 @@ export default {
         title: '',
         description: '',
         budget: 0,
-        days: '3 dni',
+        days: '14 dni',
         textRules: [
           v => !!v || 'Pole jest wymagane',
           v => (v && v.length >= 5) || 'Pole musi mieć co najmniej 5 znaków'

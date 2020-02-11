@@ -9,16 +9,16 @@
                 </div>
             </div>
             <div class="text-center mt-sm-12 d-flex d-sm-block">
-                <router-link to="/profile" class="text-link-active">
+                <router-link :to="{ name: 'profile', params: { user_id: user['@id'].match(/\d+/)[0] }}" class="text-link-active">
                     <div class="mx-2 py-2">
-                        <div :class="this.$vuetify.breakpoint.smAndUp ? 'display-1' : 'subtitle-1 font-weight-medium'">{{ user.username }}</div>
+                        <div :class="this.$vuetify.breakpoint.smAndUp ? 'display-1' : 'subtitle-1 font-weight-medium'">{{ user.login }}</div>
                         <v-chip label small :color="user.type ? 'warning' : 'primary'" class="ma-sm-2">{{ user.type ? 'Firma' : 'Osoba prywatna' }}</v-chip>
                     </div>
                 </router-link>
                 <div class="py-3 mr-auto mx-4 caption d-block d-sm-block">
                     <div>Zarejestrowany: {{ user.createdAtAgo }}</div>
-                    <v-divider class="my-1 my-sm-2" />
-                    <div>Dodano: {{ date }}</div>
+                    <v-divider v-if="date" class="my-1 my-sm-2" />
+                    <div v-if="date">Dodano: {{ date }}</div>
                 </div>
             </div>
         </div>

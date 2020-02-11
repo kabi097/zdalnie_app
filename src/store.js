@@ -5,13 +5,14 @@ import jwt_decode from 'jwt-decode'
 import qs from 'qs'
 
 Vue.use(Vuex)
-axios.defaults.baseURL = 'http://192.168.0.4:8000'
+axios.defaults.baseURL = 'http://localhost:8000'
 
 export default new Vuex.Store({
   state: {
     posts: [],
     postData: null,
     categories: [],
+    userData: null,
     parameters: {
       page: 1,
       itemsPerPage: 10,
@@ -54,6 +55,7 @@ export default new Vuex.Store({
     loggedIn: state => !!state.token && !!state.currentUser,
     currentUser: state => state.currentUser,
     postData: state => state.postData,
+    userData: state => state.userData,
     isAdmin: state => state.isAdmin,
     paginationLength: state => state.paginationLength,
     queryParams: state => state.parameters
@@ -62,6 +64,9 @@ export default new Vuex.Store({
   mutations: {
     GET_POSTS: (state, posts) => {
       state.posts = posts
+    },
+    GET_USER_DATA: (state, user) => {
+      state.userData = user
     },
     GET_POST_DATA: (state, post) => {
       state.postData = post
@@ -142,9 +147,31 @@ export default new Vuex.Store({
         }
       })
     },
+    getUserPosts ({ state, commit }, category) {
+      const postAddress = (category) ? '/api/categories/' + category.match(/\d+/)[0] + '/posts' : '/api/posts'
+      axios.get(postAddress, { 
+          params: state.parameters,
+          paramsSerializer: params => {
+            return qs.stringify(params)
+      }}).then(response => {
+        commit('GET_POSTS', response.data['hydra:member'])
+        if (response.data['hydra:totalItems']) {
+          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / this.state.parameters.itemsPerPage)+1)
+        } else {
+          commit('SET_PAGINATION_LENGTH', 1)
+        }
+      })
+    },
     getPostData ({ commit, state }, post_id) {
       axios.get('/api/posts/' + post_id.match(/\d+/)[0],).then(response => {
         commit('GET_POST_DATA', response.data)
+      }).catch(() => {
+        window.location = '/404'
+      })
+    },
+    getUserData ({ commit, state }, user_id) {
+      axios.get('/api/users/' + user_id.match(/\d+/)[0],).then(response => {
+        commit('GET_USER_DATA', response.data)
       }).catch(() => {
         window.location = '/404'
       })
