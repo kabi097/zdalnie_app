@@ -46,6 +46,7 @@
 </template>
 <script>
 import Menu from '@/components/Menu.vue';
+import { mapState } from 'vuex';
 
 export default {
     components: {
@@ -69,16 +70,27 @@ export default {
       return {
         items: [
           { title: 'Kopiuj link', icon: 'mdi-link', click: () => console.log('Copy link') },
-          { title: 'Edytuj', icon: 'mdi-pencil', click: () => console.log('aaa') },
-          { 
-            title: 'Usuń', 
-            icon: 'mdi-trash-can-outline', 
-            click: () => this.$store.dispatch('deletePost', this.post['@id'])
-          },
           { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
         ],
       }
     },
+    mounted () {
+      if (this.post.user['@id'].match(/\d+/)[0]==this.currentUser || this.isAdmin) {
+        this.items.push(
+        { 
+            title: 'Usuń', 
+            icon: 'mdi-trash-can-outline', 
+            click: () => this.$store.dispatch('deletePost', this.post['@id'])
+        },
+        {
+          title: 'Edytuj', 
+          icon: 'mdi-pencil', 
+          click: () => this.$router.push({name: 'post', params: { post_id: this.post['@id'].match(/\d+/)[0] }, query: { edit: true }})
+        }
+        );
+      }
+    },
+    computed: mapState(['currentUser', 'isAdmin']),
     methods: {
       deletePost () {
         this.$store.dispatch('deletePost', id)

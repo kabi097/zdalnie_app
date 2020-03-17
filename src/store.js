@@ -47,6 +47,7 @@ export default new Vuex.Store({
       user: '',
       days: ''
     },
+    editPost: null,
     notifications: []
   },
   getters: {
@@ -58,7 +59,8 @@ export default new Vuex.Store({
     userData: state => state.userData,
     isAdmin: state => state.isAdmin,
     paginationLength: state => state.paginationLength,
-    queryParams: state => state.parameters
+    queryParams: state => state.parameters,
+    editPost: state => state.editPost
     // currentCategory: state => state.currentCategory
   },
   mutations: {
@@ -122,6 +124,9 @@ export default new Vuex.Store({
     },
     SET_ORDER: (state, order) => {
       state.parameters.order = order
+    },
+    SET_EDIT_POST: (state, post) => {
+      state.editPost = post
     },
     PUSH_NOTIFICATION: (state, notification) => {
       state.notifications.push({
@@ -247,6 +252,13 @@ export default new Vuex.Store({
     openAddForm ({ commit, state }) {
       commit('SET_ADD_FORM', true)
     },
+    openEditForm({ commit, state }, post) {
+      commit('SET_ADD_FORM', true)
+      commit('SET_EDIT_POST', post)
+    },
+    emptyEditPost({ commit, state }) {
+      commit('SET_EDIT_POST', null)
+    },
     closeAddForm ({ commit, state }) {
       commit('SET_ADD_FORM', false)
     },
@@ -317,11 +329,9 @@ export default new Vuex.Store({
       if (!!post && !!state.newPost) {
         if (state.token && state.currentUser) {
           if (!state.newPostCategory) {
-            console.log('ok 41')
             commit('SET_NEW_POST', post)
             this.dispatch('openSelectCategory')
           } else {
-            console.log('ok 42')
             const newPost = state.newPost
             newPost.user = '/api/users/' + state.currentUser
             newPost.category = state.newPostCategory
@@ -329,7 +339,12 @@ export default new Vuex.Store({
               commit('SET_NEW_POST', null)
               commit('SET_NEW_POST_CATEGORY', null)
               commit('SET_SELECT_CATEGORY', false)
-              window.location = '/post/' + response.data['@id'].match(/\d+/)[0]
+              this.dispatch('addNotification', {
+                type: 'success',
+                message: 'Twoje ogłoszenie zostało dodane.',
+                timeout: 5000
+              })
+              router.push({name: 'post', params: { post_id: response.data['@id'].match(/\d+/)[0] }})
             }).catch(error => {
               this.dispatch('addNotification', {
                 type: 'error',
@@ -341,6 +356,27 @@ export default new Vuex.Store({
           commit('SET_NEW_POST', post)
           this.dispatch('openLoginForm')
         }
+      }
+    },
+    editPost({ state, commit }, post) {
+      if (state.token && state.currentUser) {
+        axios.put('/api/posts/'+post.postId, post).then(response => {
+          commit('SET_EDIT_POST', null)
+          commit('SET_NEW_POST_CATEGORY', null)
+          commit('SET_SELECT_CATEGORY', false)
+          this.dispatch('getPostData', post.postId.toString())
+          this.dispatch('addNotification', {
+            type: 'success',
+            message: 'Twoje ogłoszenie zostało zmienione.',
+            timeout: 5000
+          })
+          router.push({name: 'post', params: { post_id: response.data['@id'].match(/\d+/)[0] }})
+        }).catch(error => {
+          this.dispatch('addNotification', {
+            type: 'error',
+            message: 'Błąd! Nie udało się utworzyć ogłoszenia.',
+          })
+        })      
       }
     },
     sendReply ({ state, commit }, reply) {

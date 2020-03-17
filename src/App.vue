@@ -70,7 +70,7 @@
           <RegisterForm v-if="this.$store.state.showRegisterForm" />
           <LoginForm v-if="this.$store.state.showLoginForm" />
           <SelectCategory v-if="this.$store.state.showSelectCategory" />
-          <AddForm popupMode v-if="this.$store.state.showAddForm" />
+          <AddForm popupMode :post="editPost" v-if="this.$store.state.showAddForm" />
           <CategoriesBrowser popupMode v-if="this.$store.state.showCategoriesBrowser" />
         </div>
       </v-overlay>
@@ -90,6 +90,7 @@ import AddForm from '@/components/AddForm.vue'
 import CategoriesBrowser from '@/components/CategoriesBrowser.vue'
 import NotificationList from '@/components/NotificationList.vue'
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -105,14 +106,7 @@ export default {
     showRegisterForm: true,
     drawer: null,
   }),
-  computed: {
-    loggedIn () { 
-      return this.$store.getters.loggedIn
-    },
-    currentUser () {
-      return this.$store.getters.currentUser
-    },
-  },
+  computed: mapState(['loggedIn', 'currentUser', 'editPost']),
   mounted () {
     this.$store.dispatch('getCategories')
     if (this.$store.state.token) {

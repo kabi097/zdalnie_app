@@ -13,7 +13,7 @@
           <v-col cols="12" md="3" order="2" order-md="2"> 
             <ProfileCard :user="post.user" :date="post.createdAt" />
             <div class="mr-md-4">
-              <v-btn v-if="loggedIn && (currentUser == post.user['@id'].match(/\d+/)[0] || isAdmin)" block class="mb-3" color="warning">Edytuj</v-btn>
+              <v-btn v-if="loggedIn && (currentUser == post.user['@id'].match(/\d+/)[0] || isAdmin)" @click="openEditForm" block class="mb-3" color="warning">Edytuj</v-btn>
               <v-btn v-if="loggedIn && (currentUser == post.user['@id'].match(/\d+/)[0] || isAdmin)" @click="deletePost" block class="mb-3" color="red">Kasuj</v-btn>
               <v-btn v-if="loggedIn && (currentUser == post.user['@id'].match(/\d+/)[0] || isAdmin)" block class="mb-3" color="green">Oznacz jako zakończone</v-btn>
               <v-btn block class="mb-3">Zgłoś ogłoszenie</v-btn>
@@ -171,6 +171,15 @@ export default {
       if (currentIndex >= 0 && currentIndex < this.allPosts.length - 1) {
         this.$router.push('/post/' + this.allPosts[currentIndex + 1]['@id'].match(/\d+/)[0])
         this.$store.dispatch('getPostData', this.$route.path)
+      }
+    },
+    openEditForm () {
+      console.log('edit post')
+      this.$store.dispatch('toggleOverlay', false)
+      if (this.$store.state.currentUser && this.$store.state.token) {
+        this.$store.dispatch('openEditForm', this.post)
+      } else {
+        this.$store.dispatch('openLoginForm')
       }
     }
   },
