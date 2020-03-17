@@ -14,6 +14,7 @@ export default new Vuex.Store({
     postData: null,
     categories: [],
     userData: null,
+    userPosts: null,
     parameters: {
       page: 1,
       itemsPerPage: 10,
@@ -57,6 +58,7 @@ export default new Vuex.Store({
     currentUser: state => state.currentUser,
     postData: state => state.postData,
     userData: state => state.userData,
+    userPosts: state => state.userPosts,
     isAdmin: state => state.isAdmin,
     paginationLength: state => state.paginationLength,
     queryParams: state => state.parameters,
@@ -72,6 +74,9 @@ export default new Vuex.Store({
     },
     GET_POST_DATA: (state, post) => {
       state.postData = post
+    },
+    GET_USER_POSTS: (state, posts) => {
+      state.userPosts = posts
     },
     GET_CATEGORIES: (state, categories) => {
       state.categories = categories
@@ -123,7 +128,8 @@ export default new Vuex.Store({
       state.parameters.budget.lte = max
     },
     SET_ORDER: (state, order) => {
-      state.parameters.order = order
+      state.parameters.GET_USER_POSTS
+      order = order
     },
     SET_EDIT_POST: (state, post) => {
       state.editPost = post
@@ -146,22 +152,7 @@ export default new Vuex.Store({
   actions: {
     getPosts ({ state, commit }, category) {
       const postAddress = (category) ? '/api/categories/' + category.match(/\d+/)[0] + '/posts' : '/api/posts'
-      axios.get(postAddress, { 
-          params: state.parameters,
-          paramsSerializer: params => {
-            return qs.stringify(params)
-      }}).then(response => {
-        commit('GET_POSTS', response.data['hydra:member'])
-        if (response.data['hydra:totalItems']) {
-          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / this.state.parameters.itemsPerPage)+1)
-        } else {
-          commit('SET_PAGINATION_LENGTH', 1)
-        }
-      })
-    },
-    getUserPosts ({ state, commit }, category) {
-      const postAddress = (category) ? '/api/categories/' + category.match(/\d+/)[0] + '/posts' : '/api/posts'
-      axios.get(postAddress, { 
+      axios.get(postAddress, {
           params: state.parameters,
           paramsSerializer: params => {
             return qs.stringify(params)
@@ -184,6 +175,42 @@ export default new Vuex.Store({
     getUserData ({ commit, state }, user_id) {
       axios.get('/api/users/' + user_id.match(/\d+/)[0],).then(response => {
         commit('GET_USER_DATA', response.data)
+      }).catch(() => {
+        window.location = '/404'
+      })
+    },
+    getUserPosts ({ commit, state }, { user_id, page }) {
+      axios.get('/api/users/' + user_id.match(/\d+/)[0] + '/posts', {
+        params: {
+          itemsPerPage: 5,
+          order: 'desc',
+          page: page
+        },
+      }).then(response => {
+        commit('GET_USER_POSTS', response.data['hydra:member'])
+        if (response.data['hydra:totalItems']) {
+          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / 5)+1)
+        } else {
+          commit('SET_PAGINATION_LENGTH', 1)
+        }
+      }).catch(() => {
+        window.location = '/404'
+      })
+    },
+    getUserReplies ({ commit, state }, { user_id, page }) {
+      axios.get('/api/users/' + user_id.match(/\d+/)[0] + '/posts', {
+        params: {
+          itemsPerPage: 5,
+          order: 'desc',
+          page: page
+        },
+      }).then(response => {
+        commit('GET_USER_POSTS', response.data['hydra:member'])
+        if (response.data['hydra:totalItems']) {
+          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / 5)+1)
+        } else {
+          commit('SET_PAGINATION_LENGTH', 1)
+        }
       }).catch(() => {
         window.location = '/404'
       })
@@ -295,7 +322,6 @@ export default new Vuex.Store({
           type: 'success',
           message: 'Pomyślnie usunięto wpis',
         })
-        // location.reload(
         router.push('/')
         commit('GET_POSTS', this.state.posts.filter(post => post['@id'] !== id))
       }).catch((error) => {
@@ -365,16 +391,20 @@ export default new Vuex.Store({
           commit('SET_NEW_POST_CATEGORY', null)
           commit('SET_SELECT_CATEGORY', false)
           this.dispatch('getPostData', post.postId.toString())
+          if (router.currentRoute.name == 'category' || router.currentRoute.name ==  'pagination_category') {
+            this.dispatch('getPosts', router.currentRoute.params.category_id)
+          } else {
+            this.dispatch('getPosts', null)
+          }
           this.dispatch('addNotification', {
             type: 'success',
             message: 'Twoje ogłoszenie zostało zmienione.',
             timeout: 5000
           })
-          router.push({name: 'post', params: { post_id: response.data['@id'].match(/\d+/)[0] }})
         }).catch(error => {
           this.dispatch('addNotification', {
             type: 'error',
-            message: 'Błąd! Nie udało się utworzyć ogłoszenia.',
+            message: 'Błąd! Nie udało się edytować ogłoszenia.',
           })
         })      
       }

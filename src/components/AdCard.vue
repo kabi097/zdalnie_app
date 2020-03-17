@@ -62,7 +62,6 @@ export default {
         default: false
       },
       link: {
-        type: String,
         default: '#'
       }
     },
@@ -78,14 +77,14 @@ export default {
       if (this.post.user['@id'].match(/\d+/)[0]==this.currentUser || this.isAdmin) {
         this.items.push(
         { 
-            title: 'Usuń', 
-            icon: 'mdi-trash-can-outline', 
-            click: () => this.$store.dispatch('deletePost', this.post['@id'])
+          title: 'Usuń', 
+          icon: 'mdi-trash-can-outline', 
+          click: () => this.$store.dispatch('deletePost', this.post['@id'])
         },
         {
           title: 'Edytuj', 
           icon: 'mdi-pencil', 
-          click: () => this.$router.push({name: 'post', params: { post_id: this.post['@id'].match(/\d+/)[0] }, query: { edit: true }})
+          click: () => this.openEditForm()
         }
         );
       }
@@ -94,6 +93,14 @@ export default {
     methods: {
       deletePost () {
         this.$store.dispatch('deletePost', id)
+      },
+      openEditForm () {
+        this.$store.dispatch('toggleOverlay', false)
+        if (this.$store.state.currentUser && this.$store.state.token) {
+          this.$store.dispatch('openEditForm', this.post)
+        } else {
+          this.$store.dispatch('openLoginForm')
+        }
       }
     }
 }

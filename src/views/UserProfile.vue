@@ -11,7 +11,7 @@
             <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
           </v-col>
           <v-col cols="12" md="3" order="2" order-md="2"> 
-            <ProfileCard :user="user" />
+            <ProfileCard :user="userData" />
             <div class="mr-md-4">
               <v-btn block class="mb-3" color="primary">Napisz wiadomość</v-btn>
               <v-btn block class="mb-3" color="warning">Edytuj</v-btn>
@@ -23,36 +23,36 @@
               <div class="pa-4 mb-3">
                   <div class="title">
                     <v-icon left size="40">mdi-account-circle</v-icon>
-                    Profil użytkownika {{ user.login }}
+                    Profil użytkownika {{ userData.login }}
                   </div>
                   <v-divider class="my-3" />
                   <div class="body-2 pb-3 font-weight-medium">Opis</div>
                   <div class="font-weight-regular pb-2">
-                    {{ user.descripion }}
+                    {{ userData.descripion }}
                   </div>
                   <v-row no-gutters>
                       <v-col xs="12" sm="6">
                         <div class="body-2 py-3 font-weight-medium">Numer telefonu</div>
                         <div class="font-weight-regular pb-2">
-                            {{ user.publicPhone }}
+                            {{ userData.publicPhone }}
                         </div>
                       </v-col>
                       <v-col cols="12" sm="6">
                         <div class="body-2 py-3 font-weight-medium">Adres e-mail</div>
-                        <div class="font-weight-regular pb-2">{{ user.publicEmail }}</div>
+                        <div class="font-weight-regular pb-2">{{ userData.publicEmail }}</div>
                       </v-col>
                       <v-col cols="12" sm="6">
                         <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych zleceń</div>
                         <div class="font-weight-regular pb-2">
-                          <v-chip v-if="!user.posts.length">brak</v-chip>
-                          <div v-else>{{ user.posts.length }}</div>
+                          <v-chip v-if="!userData.posts.length">brak</v-chip>
+                          <div v-else>{{ userData.posts.length }}</div>
                         </div>
                       </v-col>
                       <v-col cols="12" sm="6">
                         <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych odpowiedzi</div>
                         <div class="font-weight-regular pb-2">
-                          <v-chip v-if="!user.replies.length">brak</v-chip>
-                          <div v-else>{{ user.replies.length }}</div>
+                          <v-chip v-if="!userData.replies.length">brak</v-chip>
+                          <div v-else>{{ userData.replies.length }}</div>
                         </div>
                       </v-col>
                       <v-col cols="12" sm="6">
@@ -65,7 +65,7 @@
                                 <v-chip small class="mr-1">Laravel</v-chip>
                                 <v-chip small class="mr-1">REST API</v-chip>
                             </v-chip-group> -->
-                            {{ user.publicAddress }}
+                            {{ userData.publicAddress }}
                         </div>
                       </v-col>
                       <v-col cols="12" sm="6">
@@ -76,11 +76,29 @@
               </div>
             </v-card>
             <v-divider class="mt-6 mb-3 mx-1" />
-            <div class="title my-4">Zlecenia użytkownika Jan Kowalski</div>
-                <ad-card v-for="post in user.posts" :key="post['@id']" :post="post" :link="{ name: 'post', params: { post_id: post['@id'].match(/\d+/)[0]}}" />
+            <v-tabs v-model="tab" grow class="mb-2">
+              <v-tab>Zlecenia</v-tab>
+              <v-tab>Odpowiedzi</v-tab>
+            
+              <!-- <div class="title my-4">Zlecenia użytkownika Jan Kowalski</div> -->
+              <v-tabs-items v-model="tab" class="mt-2">
+                <v-tab-item>
+                    <ad-card v-for="post in userPosts" :key="post['@id']" :post="post" :link="{ name: 'post', params: { post_id: post['@id'].match(/\d+/)[0]}}" />
+                    <div class="text-center">
+                      <v-pagination
+                        v-model="page"
+                        :length="paginationLength"
+                      ></v-pagination>
+                    </div>
+                </v-tab-item>
+                <v-tab-item>
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure iste, quo rerum aut eos, nesciunt, quod ullam qui id voluptatem molestiae assumenda labore? Dolorum inventore cupiditate quibusdam doloremque minima voluptatibus.
+                </v-tab-item>
+              </v-tabs-items>
+            </v-tabs>
             <!-- <v-divider class="mt-6 mb-3" />
             <div class="title my-4 mx-1">Odpowiedzi użytkownika Jan Kowalski</div>
-            <reply v-for="reply in user.replies" :key="reply['@id']" :reply="reply" link="/example"/> -->
+            <reply v-for="reply in userData.replies" :key="reply['@id']" :reply="reply" link="/example"/> -->
           </v-col>
       </v-row>
   </v-container>
@@ -91,6 +109,7 @@ import ReplyForm from '@/components/ReplyForm.vue';
 import Reply from '@/components/Reply.vue';
 import ProfileCard from '@/components/ProfileCard.vue';
 import AdCard from '@/components/AdCard.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -100,7 +119,8 @@ export default {
     AdCard
   },
   data: () => ({
-    breadcrumbs: [{
+    breadcrumbs: [
+      {
         text: 'Strona główna',
         disabled: false,
         href: 'breadcrumbs_dashboard',
@@ -111,24 +131,26 @@ export default {
         href: '#',
       },
     ],
+    repliesMode: false,
+    page: 1,
+    tab: null
   }),
-  computed: {
-    user () {
-      return this.$store.getters.userData
-    },
-    loggedIn () {
-      return this.$store.getters.loggedIn
-    },
-    currentUser () {
-      return this.$store.getters.currentUser
-    },
-    isAdmin () {
-      return this.$store.getters.isAdmin
-    },
-  },
+  computed: mapGetters(['userData', 'loggedIn', 'currentUser', 'isAdmin', 'userPosts', 'paginationLength']),
   mounted () {
-      this.$store.dispatch('getUserData', this.$route.path)      
+      this.$store.dispatch('getUserData', this.$route.path)
+      this.$store.dispatch('getUserPosts', { user_id: this.$route.path, page: this.page})    
   },
+  watch: {
+    page (pageNumber) {
+      // this.$store.dispatch('setPage', pageNumber)
+      this.$store.dispatch('getUserPosts', { user_id: this.$route.path, page: pageNumber})
+      // if (this.$route.name == 'category' || this.$route.name == 'pagination_category') {
+      //   this.$router.push({ name: 'pagination_category', params: { category_id: this.$route.params.category_id, page: pageNumber } })
+      // } else {
+      //   this.$router.push({ name: 'pagination_home', params: { page: pageNumber } })
+      // }
+    }
+  }
 }
 </script>
 

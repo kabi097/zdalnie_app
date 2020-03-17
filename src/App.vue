@@ -90,7 +90,7 @@ import AddForm from '@/components/AddForm.vue'
 import CategoriesBrowser from '@/components/CategoriesBrowser.vue'
 import NotificationList from '@/components/NotificationList.vue'
 import axios from 'axios'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
@@ -106,7 +106,7 @@ export default {
     showRegisterForm: true,
     drawer: null,
   }),
-  computed: mapState(['loggedIn', 'currentUser', 'editPost']),
+  computed: mapGetters(['loggedIn', 'currentUser', 'editPost']),
   mounted () {
     this.$store.dispatch('getCategories')
     if (this.$store.state.token) {
@@ -126,6 +126,7 @@ export default {
           message: 'Fajne powiadomienie',
           timeout: 10000,
       })
+      console.log(this.$router.currentRoute)
     },
     navigateHome () {
       if (this.$route.path !== '/') {

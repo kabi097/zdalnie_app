@@ -174,7 +174,6 @@ export default {
       }
     },
     openEditForm () {
-      console.log('edit post')
       this.$store.dispatch('toggleOverlay', false)
       if (this.$store.state.currentUser && this.$store.state.token) {
         this.$store.dispatch('openEditForm', this.post)
