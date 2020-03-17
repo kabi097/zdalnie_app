@@ -53,6 +53,7 @@
         <v-btn v-if="loggedIn" text @click="$store.dispatch('logout')">Wyloguj</v-btn>
         <v-btn v-if="!loggedIn" text @click="openLogin">Zaloguj się</v-btn>
         <v-btn v-if="!loggedIn" text @click="openRegister">Zarejestruj się</v-btn>
+        <v-btn text @click="test">Test</v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-content>
@@ -73,25 +74,11 @@
           <CategoriesBrowser popupMode v-if="this.$store.state.showCategoriesBrowser" />
         </div>
       </v-overlay>
-      <v-snackbar
-        v-model="snackbarShow"
-        :color="snackbarColor"
-        loading="10000"
-      >
-        {{ $store.state.snackbarText }}
-        <v-btn
-          color="pink"
-          text
-          light
-          @click="$store.dispatch('setSnackbar', '')"
-        >
-          Zamknij
-        </v-btn>
-      </v-snackbar>
     </v-content>
     <v-footer>
       Copyright 2019
     </v-footer>
+    <notification-list />
   </v-app>
 </template>
 
@@ -101,6 +88,7 @@ import LoginForm from '@/components/LoginForm.vue'
 import SelectCategory from '@/components/SelectCategory.vue'
 import AddForm from '@/components/AddForm.vue'
 import CategoriesBrowser from '@/components/CategoriesBrowser.vue'
+import NotificationList from '@/components/NotificationList.vue'
 import axios from 'axios'
 
 export default {
@@ -110,13 +98,12 @@ export default {
     LoginForm,
     SelectCategory,
     AddForm,
-    CategoriesBrowser
+    CategoriesBrowser,
+    NotificationList
   },
   data: () => ({
     showRegisterForm: true,
-    snackbarShow: false,
     drawer: null,
-    snackbarColor: 'error'
   }),
   computed: {
     loggedIn () { 
@@ -132,18 +119,20 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$store.state.token
     } 
   },
-  created: function () {
-    this.$store.subscribe((mutation, state) => {
-      if (state.snackbarText !== '') {
-        this.snackbarShow = true
-        this.snackbarColor = this.$store.state.snackbarColor
-        // this.$store.dispatch('setSnackbar', '')
-      } else {
-        this.snackbarShow = false
-      }
-    })
-  },
   methods: {
+    test () {
+      // this.$swal.fire({
+      //   title: 'Error!',
+      //   text: 'Do you want to continue',
+      //   icon: 'error',
+      //   confirmButtonText: 'Cool'
+      // })
+      this.$store.dispatch('addNotification', {
+          type: 'success',
+          message: 'Fajne powiadomienie',
+          timeout: 10000,
+      })
+    },
     navigateHome () {
       if (this.$route.path !== '/') {
         this.$router.push('/')

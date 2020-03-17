@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
+import router from './router'
 import qs from 'qs'
 
 Vue.use(Vuex)
@@ -37,8 +38,6 @@ export default new Vuex.Store({
     showCategoriesBrowser: false,
     loadingRegister: false,
     loadingLogin: false,
-    snackbarText: '',
-    snackbarColor: 'error',
     newPostCategory: '',
     newPost: {
       title: '',
@@ -47,7 +46,8 @@ export default new Vuex.Store({
       category: '',
       user: '',
       days: ''
-    }
+    },
+    notifications: []
   },
   getters: {
     allPosts: state => state.posts,
@@ -95,10 +95,6 @@ export default new Vuex.Store({
     SET_NEW_POST_CATEGORY: (state, category) => {
       state.newPostCategory = category
     },
-    SET_SNACKBAR: (state, text, color) => {
-      state.snackbarText = text
-      state.snackbarColor = color
-    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
@@ -126,6 +122,17 @@ export default new Vuex.Store({
     },
     SET_ORDER: (state, order) => {
       state.parameters.order = order
+    },
+    PUSH_NOTIFICATION: (state, notification) => {
+      state.notifications.push({
+        ...notification, 
+        id: (Math.random().toString(36) + Date.now().toString(36).substr(2))
+      })
+    },
+    REMOVE_NOTIFICATION: (state, notificationToRemove) => {
+      state.notifications = state.notifications.filter(notification => {
+        return notification.id != notificationToRemove.id
+      })
     }
     // SET_CURRENT_CATEGORY: (state, category) => {
     //   state.currentCategory = category
@@ -190,7 +197,10 @@ export default new Vuex.Store({
           password: user.password
         })
       }).catch(error => {
-        this.dispatch('setSnackbar', error.response.data.violations[0].message, 'error')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się zarejestrować nowego użytkownika.',
+        })
         state.loadingRegister = false
       })
     },
@@ -205,15 +215,17 @@ export default new Vuex.Store({
         localStorage.setItem('current_user', tokenData.id)
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
         commit('SET_TOKEN', token)
+        this.dispatch('addNotification', {
+          type: 'success',
+          message: 'Zalogowano pomyślnie',
+        })
         this.dispatch('toggleOverlay', false)
-        this.dispatch('setSnackbar', 'Zalogowano pomyślnie')
         this.dispatch('createPost')
-        // setTimeout(() => {
-        //   this.dispatch('logout')  
-        // }, 100000)
       }).catch((error) => {
-        state.loadingLogin = false
-        this.dispatch('setSnackbar', error.response.data.message, 'error')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się zalogować.',
+        })
       })
     },
     toggleOverlay ({ commit, state }, toggle) {
@@ -244,12 +256,6 @@ export default new Vuex.Store({
     closeCategoriesBrowser ({ commit, state }) {
       commit('SET_CATEGORIES_BROWSER', false)
     },
-    setSnackbar ({ commit, state }, text, color) {
-      commit('SET_SNACKBAR', text, (color !== '') ? color : 'error')
-      // setTimeout(() => {
-      //   commit('SET_SNACKBAR', '', 'error')
-      // }, 9999)
-    },
     setPage ({ commit, state }, page) {
       commit('SET_PAGE', page)
     },
@@ -273,20 +279,33 @@ export default new Vuex.Store({
     },
     deletePost ({ state, commit }, id) {
       axios.delete('/api/posts/' + id.match(/\d+/)[0]).then(response => {
-        this.dispatch('setSnackbar', 'Pomyślnie usunięto wpis', '')
+        this.dispatch('addNotification', {
+          type: 'success',
+          message: 'Pomyślnie usunięto wpis',
+        })
         // location.reload(
+        router.push('/')
         commit('GET_POSTS', this.state.posts.filter(post => post['@id'] !== id))
       }).catch((error) => {
-        this.dispatch('setSnackbar', error.response, '')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się usunąć ogłoszenia',
+        })
         console.log(error)
       })
     },
     deleteReply ({ state, commit }, reply) {
       axios.delete('/api/replies/' + reply.replyId.match(/\d+/)[0]).then(response => {
-        this.dispatch('setSnackbar', 'Pomyślnie usunięto wpis', '')
+        this.dispatch('addNotification', {
+          type: 'success',
+          message: 'Pomyślnie usunięto wpis',
+        })
         this.dispatch('getPostData', reply.postId)
       }).catch((error) => {
-        this.dispatch('setSnackbar', error.response, '')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się usunąć odpowiedzi.',
+        })
       })
     },
     setNewPostCategory ({ commit, state }, category) {
@@ -304,7 +323,7 @@ export default new Vuex.Store({
           } else {
             console.log('ok 42')
             const newPost = state.newPost
-            newPost.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
+            newPost.user = '/api/users/' + state.currentUser
             newPost.category = state.newPostCategory
             axios.post('/api/posts', newPost).then(response => {
               commit('SET_NEW_POST', null)
@@ -312,7 +331,10 @@ export default new Vuex.Store({
               commit('SET_SELECT_CATEGORY', false)
               window.location = '/post/' + response.data['@id'].match(/\d+/)[0]
             }).catch(error => {
-              this.dispatch('setSnackbar', error.response.title, '')
+              this.dispatch('addNotification', {
+                type: 'error',
+                message: 'Błąd! Nie udało się utworzyć ogłoszenia.',
+              })
             })
           }
         } else {
@@ -323,12 +345,18 @@ export default new Vuex.Store({
     },
     sendReply ({ state, commit }, reply) {
       reply.isPublished = true
-      reply.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
+      reply.user = '/api/users/' + state.currentUser
       axios.post('/api/replies', reply).then(response => {
         this.dispatch('getPostData', reply.post)
-        this.dispatch('setSnackbar', 'Twój wpis został dodany', '')
+        this.dispatch('addNotification', {
+          type: 'success',
+          message: 'Pomyślnie dodano nowy wpis',
+        })
       }).catch(error => {
-        this.dispatch('setSnackbar', error.response.title, '')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się wysłać odpowiedzi.',
+        })
       })
     },
     editReply ({ state, commit }, reply) {
@@ -336,14 +364,26 @@ export default new Vuex.Store({
       reply.user = '/api/users/' + state.currentUser.match(/\d+/)[0]
       axios.put('/api/replies/' + reply.replyId.match(/\d+/)[0], reply).then(response => {
         this.dispatch('getPostData', reply.post)
-        this.dispatch('setSnackbar', 'Twój wpis pomyślnie edytowany', '')
+        this.dispatch('addNotification', {
+          type: 'success',
+          message: 'Twój wpis został pomyślnie edytowany',
+        })
       }).catch(error => {
-        this.dispatch('setSnackbar', error.response.title, '')
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się edytować odpowiedzi!',
+        })
       })
-    }
+    },
     // setCategory ({ state, commit }, category) {
     //   commit('SET_CURRENT_CATEGORY', category)
     //   this.dispatch('getPosts', category)
     // }
-  }
+    addNotification ({ state, commit }, notification ) {
+      commit('PUSH_NOTIFICATION', notification)
+    },
+    removeNotification ({ state, commit }, notification) {
+      commit('REMOVE_NOTIFICATION', notification)
+    }
+  },
 })
