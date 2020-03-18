@@ -15,6 +15,7 @@ export default new Vuex.Store({
     categories: [],
     userData: null,
     userPosts: null,
+    userReplies: null,
     parameters: {
       page: 1,
       itemsPerPage: 10,
@@ -28,7 +29,8 @@ export default new Vuex.Store({
       }
     },
     paginationLength: 1,
-    // currentCategory: '',
+    paginationLengthUserPosts: 1,
+    paginationLengthUserReplies: 1,
     token: localStorage.getItem('access_token') || null,
     isAdmin: false,
     currentUser: localStorage.getItem('current_user') || null,
@@ -59,11 +61,13 @@ export default new Vuex.Store({
     postData: state => state.postData,
     userData: state => state.userData,
     userPosts: state => state.userPosts,
+    userReplies: state => state.userReplies,
     isAdmin: state => state.isAdmin,
     paginationLength: state => state.paginationLength,
+    paginationLengthUserPosts: state => state.paginationLengthUserPosts,
+    paginationLengthUserReplies: state => state.paginationLengthUserReplies,
     queryParams: state => state.parameters,
     editPost: state => state.editPost
-    // currentCategory: state => state.currentCategory
   },
   mutations: {
     GET_POSTS: (state, posts) => {
@@ -77,6 +81,9 @@ export default new Vuex.Store({
     },
     GET_USER_POSTS: (state, posts) => {
       state.userPosts = posts
+    },
+    GET_USER_REPLIES: (state, replies) => {
+      state.userReplies = replies
     },
     GET_CATEGORIES: (state, categories) => {
       state.categories = categories
@@ -114,6 +121,12 @@ export default new Vuex.Store({
     },
     SET_PAGINATION_LENGTH: (state, length) => {
       state.paginationLength = length
+    },
+    SET_PAGINATION_LENGTH_USER_REPLIES: (state, length) => {
+      state.paginationLengthUserReplies = length
+    },
+    SET_PAGINATION_LENGTH_USER_POSTS: (state, length) => {
+      state.paginationLengthUserPosts = length
     },
     SET_PAGE: (state, page) => {
       state.parameters.page = page
@@ -189,30 +202,36 @@ export default new Vuex.Store({
       }).then(response => {
         commit('GET_USER_POSTS', response.data['hydra:member'])
         if (response.data['hydra:totalItems']) {
-          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / 5)+1)
+          commit('SET_PAGINATION_LENGTH_USER_POSTS', Math.floor(response.data['hydra:totalItems'] / 5)+1)
         } else {
-          commit('SET_PAGINATION_LENGTH', 1)
+          commit('SET_PAGINATION_LENGTH_USER_POSTS', 1)
         }
       }).catch(() => {
-        window.location = '/404'
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się pobrać ogłoszeń użytkownika.',
+        })
       })
     },
     getUserReplies ({ commit, state }, { user_id, page }) {
-      axios.get('/api/users/' + user_id.match(/\d+/)[0] + '/posts', {
+      axios.get('/api/users/' + user_id.match(/\d+/)[0] + '/replies', {
         params: {
           itemsPerPage: 5,
           order: 'desc',
           page: page
         },
       }).then(response => {
-        commit('GET_USER_POSTS', response.data['hydra:member'])
+        commit('GET_USER_REPLIES', response.data['hydra:member'])
         if (response.data['hydra:totalItems']) {
-          commit('SET_PAGINATION_LENGTH', Math.floor(response.data['hydra:totalItems'] / 5)+1)
+          commit('SET_PAGINATION_LENGTH_USER_REPLIES', Math.floor(response.data['hydra:totalItems'] / 5)+1)
         } else {
-          commit('SET_PAGINATION_LENGTH', 1)
+          commit('SET_PAGINATION_LENGTH_USER_REPLIES', 1)
         }
       }).catch(() => {
-        window.location = '/404'
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się pobrać odpowiedzi użytkownika.',
+        })
       })
     },
     getCategories ({ commit, state }) {

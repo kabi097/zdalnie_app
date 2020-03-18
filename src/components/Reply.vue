@@ -1,13 +1,17 @@
 <template>
-    <v-card class="my-2" :elevation="(link) ? 3 : 2" min-height="180">
-        <div v-if="link" class="grey lighten-2 px-3 py-2 d-flex">
+    <v-card class="my-2" :elevation="(showLink) ? 3 : 2" min-height="180">
+        <div v-if="post" class="grey lighten-2 px-3 py-2 d-flex">
             <v-icon left class="pr-2">mdi-xbox-controller</v-icon>
             <div>
-              <router-link class="body-1 title-link-active" :to="link"></router-link>
-              <div class="overline text-none active">Opublikowano {{ reply.createdAtAgo }}</div>
+              <router-link class="body-1 font-weight-medium title-link-active" :to="{ name: 'post', params: { post_id: reply.post['@id'].match(/\d+/)[0] }}">
+                {{ reply.post.title }}
+              </router-link>
+              <div class="overline text-none active">
+                Opublikowano {{ reply.createdAtAgo }} 
+              </div>
             </div>
         </div>
-        <v-divider v-if="link" />
+        <v-divider v-if="showLink" />
         <v-row no-gutters align="stretch" justify="center">
             <v-col sm="3" class="text-center py-sm-1">   
                 <div class="d-flex align-center d-sm-block">
@@ -60,37 +64,49 @@
 </template>
 <script>
 import Menu from '@/components/Menu.vue';
+import { mapGetters } from 'vuex';
 
 export default {
     components: {
       Menu
     },
     props: {
-      link: {
-        type: String,
-        default: ''
+      post: {
+        type: Object,
+        required: false
       },
       reply: {
         type: Object,
         default: () => {}
+      },
+      showLink: {
+        type: Boolean,
+        default: false
       },
       postId: {
         type: String,
         default: ''
       }
     },
+    computed: mapGetters(['currentUser']),
     data() {
       return {
         items: [
           { title: 'Kopiuj link', icon: 'mdi-link', click: () => console.log('Copy link') },
+          { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
+        ]
+      }
+    },
+    mounted() {
+      if (!this.showLink && this.reply.user['@id'].match(/\d+/)[0] == this.currentUser) {
+        this.items.push(
           { title: 'Edytuj', icon: 'mdi-pencil', click: () => this.$emit('edit-reply', this.reply['@id']) },
           { 
             title: 'Usuń', 
             icon: 'mdi-trash-can-outline', 
             click: () => this.$store.dispatch('deleteReply', { postId: this.postId, replyId: this.reply['@id'] })
-          },
-          { title: 'Zgłoś', icon: 'mdi-alert-circle-outline', click: () => console.log('Copyaa') },
-        ]
+          }
+        )
       }
     }
 }
