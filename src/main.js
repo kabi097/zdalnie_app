@@ -5,7 +5,6 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
-Vue.http.headers.common['Access-Control-Allow-Origin'] = true
 
 new Vue({
   router,
