@@ -6,7 +6,7 @@ import router from './router'
 import qs from 'qs'
 
 Vue.use(Vuex)
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:8000'
 
 export default new Vuex.Store({
   state: {
