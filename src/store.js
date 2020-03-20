@@ -381,11 +381,18 @@ export default new Vuex.Store({
             newPost.user = '/api/users/' + state.currentUser
             newPost.category = state.newPostCategory
             axios.post('/api/posts', newPost).then(response => {
-              commit('SET_NEW_POST', null)
+              commit('SET_NEW_POST', {
+                title: '',
+                description: '',
+                budget: '',
+                category: '',
+                user: '',
+                days: ''
+              })
               commit('SET_NEW_POST_CATEGORY', null)
               commit('SET_SELECT_CATEGORY', false)
               this.dispatch('addNotification', {
-                type: 'success',
+                type: 'info',
                 message: 'Twoje ogłoszenie zostało dodane.',
                 timeout: 5000
               })
@@ -400,6 +407,10 @@ export default new Vuex.Store({
         } else {
           commit('SET_NEW_POST', post)
           this.dispatch('openLoginForm')
+          this.dispatch('addNotification', {
+            type: 'warning',
+            message: 'Aby dodać ogłoszenie, musisz się zalogować.',
+          })
         }
       }
     },
