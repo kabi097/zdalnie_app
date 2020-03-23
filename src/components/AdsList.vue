@@ -171,7 +171,16 @@ export default {
           this.$store.dispatch('setMaxBudget', this.max_value)
           if (this.$route.name == 'category' || this.$route.name == 'pagination_category') {
             this.$store.dispatch('getPosts', this.$route.path)
-            this.$router.push({ name: 'category', params: { category_id: this.$route.params.category_id } })
+            this.$router.push({ 
+              name: 'category', 
+              params: { category_id: this.$route.params.category_id },
+              query: {
+                itemsPerPage: this.itemsPerPage,
+                min: this.min_value,
+                max: this.max_value,
+                ...this.order
+              }
+            })
           } else {
             this.$router.push({ name: 'home' })
             this.$store.dispatch('getPosts')

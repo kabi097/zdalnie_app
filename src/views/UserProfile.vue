@@ -81,9 +81,7 @@
             <v-divider class="mt-6 mb-3 mx-1" />
             <v-tabs v-model="tab" grow class="mb-2">
               <v-tab>Zlecenia</v-tab>
-              <v-tab>Odpowiedzi</v-tab>
-            
-              <!-- <div class="title my-4">Zlecenia użytkownika Jan Kowalski</div> -->
+              <v-tab>Odpowiedzi</v-tab>            
               <v-tabs-items v-model="tab" class="mt-2">
                 <v-tab-item>
                     <v-skeleton-loader v-if="!userPosts" type="card@5" />
@@ -107,10 +105,9 @@
                 </v-tab-item>
               </v-tabs-items>
             </v-tabs>
-            <!-- <v-divider class="mt-6 mb-3" />
-            <div class="title my-4 mx-1">Odpowiedzi użytkownika Jan Kowalski</div> -->
           </v-col>
       </v-row>
+      <settings />
   </v-container>
 </template>
 
@@ -119,6 +116,7 @@ import ReplyForm from '@/components/ReplyForm.vue';
 import Reply from '@/components/Reply.vue';
 import ProfileCard from '@/components/ProfileCard.vue';
 import AdCard from '@/components/AdCard.vue';
+import Settings from '@/components/Settings.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -126,7 +124,8 @@ export default {
     ReplyForm,
     Reply,
     ProfileCard,
-    AdCard
+    AdCard,
+    Settings
   },
   data: () => ({
     breadcrumbs: [
