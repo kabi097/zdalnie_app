@@ -1,10 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer v-model="drawer" app temporary>
-      <v-list
-        dense
-        nav
-      >
+      <v-list dense nav>
         <v-list-item link @click="openAddForm">
           <v-list-item-content>
             <v-list-item-title>Dodaj ogłoszenie</v-list-item-title>
@@ -53,7 +50,6 @@
         <v-btn v-if="loggedIn" text @click="$store.dispatch('logout')">Wyloguj</v-btn>
         <v-btn v-if="!loggedIn" text @click="openLogin">Zaloguj się</v-btn>
         <v-btn v-if="!loggedIn" text @click="openRegister">Zarejestruj się</v-btn>
-        <v-btn text @click="test">Test</v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-content>
@@ -114,20 +110,6 @@ export default {
     } 
   },
   methods: {
-    test () {
-      // this.$swal.fire({
-      //   title: 'Error!',
-      //   text: 'Do you want to continue',
-      //   icon: 'error',
-      //   confirmButtonText: 'Cool'
-      // })
-      this.$store.dispatch('addNotification', {
-          type: 'success',
-          message: 'Fajne powiadomienie',
-          timeout: 10000,
-      })
-      console.log(this.$router.currentRoute)
-    },
     navigateHome () {
       if (this.$route.path !== '/') {
         this.$router.push('/')

@@ -3,7 +3,7 @@
     <v-row align="stretch" class="card-color mb-3 mx-0 px-0">
       <v-col cols="12" xs="12" md="7" class="pr-4">
         <div class="title">
-          <v-icon class="pr-2">mdi-xbox-controller</v-icon>
+          <v-icon class="pr-2">{{ post.category.icon }}</v-icon>
           <router-link class="title-link-active" :to="link">{{ post.title }}</router-link>
         </div>
         <router-link class="text-link-active" :to="link">
