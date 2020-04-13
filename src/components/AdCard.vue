@@ -91,7 +91,7 @@ export default {
     },
     computed: mapState(['currentUser', 'isAdmin']),
     methods: {
-      deletePost () {
+      deletePost (id) {
         this.$store.dispatch('deletePost', id)
       },
       openEditForm () {

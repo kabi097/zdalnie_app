@@ -15,67 +15,122 @@
             <ProfileCard v-else :user="userData" />
             <div class="mr-md-4">
               <v-btn block class="mb-3" color="primary">Napisz wiadomość</v-btn>
-              <v-btn block class="mb-3" color="warning">Edytuj</v-btn>
+              <v-btn block class="mb-3" color="warning" @click="enableEditMode">Edytuj</v-btn>
               <v-btn block class="mb-3">Zgłoś użytkownika</v-btn>
             </div>
           </v-col>
           <v-col cols="12" md="9" order="3" order-md="3">
             <v-skeleton-loader v-if="!userData" type="card" />
             <v-card v-else>
-              <div class="pa-4 mb-3">
-                  <div class="title">
-                    <v-icon left size="40">mdi-account-circle</v-icon>
-                    Profil użytkownika {{ userData.login }}
-                  </div>
-                  <v-divider class="my-3" />
-                  <div class="body-2 pb-3 font-weight-medium">Opis</div>
-                  <div class="font-weight-regular pb-2">
-                    {{ userData.descripion }}
-                  </div>
-                  <v-row no-gutters>
-                      <v-col xs="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Numer telefonu</div>
-                        <div class="font-weight-regular pb-2">
-                            {{ userData.publicPhone }}
-                        </div>
-                      </v-col>
-                      <v-col cols="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Adres e-mail</div>
-                        <div class="font-weight-regular pb-2">{{ userData.publicEmail }}</div>
-                      </v-col>
-                      <v-col cols="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych zleceń</div>
-                        <div class="font-weight-regular pb-2">
-                          <v-chip v-if="!userData.posts.length">brak</v-chip>
-                          <div v-else>{{ userData.posts.length }}</div>
-                        </div>
-                      </v-col>
-                      <v-col cols="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych odpowiedzi</div>
-                        <div class="font-weight-regular pb-2">
-                          <v-chip v-if="!userData.replies.length">brak</v-chip>
-                          <div v-else>{{ userData.replies.length }}</div>
-                        </div>
-                      </v-col>
-                      <v-col cols="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Adres</div>
-                        <div class="font-weight-regular pb-2">
-                            <!-- <v-chip-group>
-                                <v-chip small class="mr-1">HTML</v-chip>
-                                <v-chip small class="mr-1">CSS</v-chip>
-                                <v-chip small class="mr-1">PHP</v-chip>
-                                <v-chip small class="mr-1">Laravel</v-chip>
-                                <v-chip small class="mr-1">REST API</v-chip>
-                            </v-chip-group> -->
-                            {{ userData.publicAddress }}
-                        </div>
-                      </v-col>
-                      <v-col cols="12" sm="6">
-                        <div class="body-2 py-3 font-weight-medium">Odnośniki</div>
-                        <div class="font-weight-regular pb-2">FB</div>
-                      </v-col>
-                  </v-row>
-              </div>
+              <v-form ref="userProfileForm" v-model="valid" class="pa-2 my-2">
+                <div class="pa-4 mb-3">
+                    <div class="title d-flex justify-space-between">
+                      <div>
+                        <v-icon left size="40">mdi-account-circle</v-icon>
+                        <span v-if="!editMode">Profil użytkownika {{ userData.login }}</span>
+                        <span v-else>Edycja użytkownika {{ userData.login }}</span>
+                      </div>
+                      <v-btn v-if="!editMode" @click="enableEditMode" color="primary" outlined>
+                        <v-icon left>mdi-pencil</v-icon>
+                        Edytuj
+                      </v-btn>
+                      <div class="d-flex" v-else>
+                        <v-btn @click="disableEditMode" class="mx-2" color="error">
+                          <v-icon :left="this.$vuetify.breakpoint.mdAndUp">mdi-close</v-icon>
+                          <div v-show="this.$vuetify.breakpoint.mdAndUp">Anuluj</div>
+                        </v-btn>
+                        <v-btn @click="sendData" class="mx-2" color="success">
+                          <v-icon :left="this.$vuetify.breakpoint.mdAndUp">mdi-content-save</v-icon>
+                          <div v-show="this.$vuetify.breakpoint.mdAndUp">Zatwierdź</div>
+                        </v-btn>
+                      </div>
+                    </div>
+                    <v-divider class="my-3" />
+                    <div class="body-2 pb-3 font-weight-medium">Opis</div>
+                    <v-textarea v-if="editMode" filled name="description" v-model="editData.descripion" placeholder="Tutaj wpisz tekst" />
+                    <div v-else class="font-weight-regular pb-2">
+                      {{ userData.descripion }}
+                    </div>
+                    <v-row :no-gutters="!editMode">
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Zdjęcie profilowe</div>
+                          <v-file-input label="Zdjęcie profilowe" filled prepend-icon="mdi-camera"></v-file-input>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Nazwa firmy</div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2"></div>
+                          <v-text-field filled v-model="editData.username" prepend-inner-icon="mdi-card-account-details-outline" name="companyName" placeholder="Nazwa firmy" v-else></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Adres firmy</div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2">
+                              {{ userData.publicAddress }}
+                          </div>
+                          <v-text-field prepend-inner-icon="mdi-domain" v-model="editData.publicAddress" filled name="publicAddress" placeholder="Adres" v-else>{{ userData.publicAddress }}</v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Numer telefonu</div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2">
+                              {{ userData.publicPhone }}
+                          </div>
+                          <v-text-field filled v-model="editData.publicPhone" prepend-inner-icon="mdi-phone" name="publicPhone" placeholder="Numer telefonu" v-else>{{ userData.publicPhone }}</v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Adres e-mail</div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2">{{ userData.publicEmail }}</div>
+                          <v-text-field :rules="emailRules" v-model="editData.publicEmail" filled prepend-inner-icon="mdi-email" name="publicEmail" placeholder="Adres emails" v-else>{{ userData.publicEmail }}</v-text-field>
+                        </v-col>
+                        <v-col v-if="!editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Słowa kluczowe</div>
+                          <v-chip-group>
+                              <v-chip small class="mr-1">HTML</v-chip>
+                              <v-chip small class="mr-1">CSS</v-chip>
+                              <v-chip small class="mr-1">PHP</v-chip>
+                              <v-chip small class="mr-1">Laravel</v-chip>
+                              <v-chip small class="mr-1">REST API</v-chip>
+                          </v-chip-group>
+                        </v-col>
+                        <v-col v-if="!editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Odnośniki</div>
+                          <div class="font-weight-regular pb-2">FB</div>
+                        </v-col>
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Strona WWW</div>
+                          <v-text-field :rules="websiteRules" v-model="editData.website" filled prepend-inner-icon="mdi-earth" name="website-url" placeholder="Adres strony WWW"></v-text-field>                        
+                        </v-col>
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Profil Facebook</div>
+                          <v-text-field :rules="facebookRules" v-model="editData.facebook" prepend-inner-icon="mdi-facebook" filled name="facebook-url" placeholder="Link do profilu Facebook"></v-text-field>                        
+                        </v-col>
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Profil LinkedIn</div>
+                          <v-text-field :rules="linkedinRules" v-model="editData.linkedin" prepend-inner-icon="mdi-linkedin" filled name="linkedin-url" placeholder="Link do profilu LinkedIn"></v-text-field>                        
+                        </v-col>
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Profil GitHub</div>
+                          <v-text-field :rules="githubRules" v-model="editData.github" prepend-inner-icon="mdi-github" filled name="github-url" placeholder="Link do profilu GitHub"></v-text-field>                        
+                        </v-col>
+                        <v-col v-if="editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Profil YouTube</div>
+                          <v-text-field :rules="youtubeRules" v-model="editData.youtube" prepend-inner-icon="mdi-youtube" filled name="youtube-url" placeholder="Link do profilu YouTube"></v-text-field>                        
+                        </v-col>
+                        <v-col v-if="!editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych zleceń</div>
+                          <div class="font-weight-regular pb-2">
+                            <v-chip v-if="!userData.posts.length">brak</v-chip>
+                            <div v-else>{{ userData.posts.length }}</div>
+                          </div>
+                        </v-col>
+                        <v-col v-if="!editMode" cols="12" sm="6">
+                          <div class="body-2 py-3 font-weight-medium">Liczba opublikowanych odpowiedzi</div>
+                          <div class="font-weight-regular pb-2">
+                            <v-chip v-if="!userData.replies.length">brak</v-chip>
+                            <div v-else>{{ userData.replies.length }}</div>
+                          </div>
+                        </v-col>
+                    </v-row>
+                </div>
+              </v-form>
             </v-card>
             
             <v-divider class="mt-6 mb-3 mx-1" />
@@ -107,7 +162,6 @@
             </v-tabs>
           </v-col>
       </v-row>
-      <settings />
   </v-container>
 </template>
 
@@ -116,7 +170,6 @@ import ReplyForm from '@/components/ReplyForm.vue';
 import Reply from '@/components/Reply.vue';
 import ProfileCard from '@/components/ProfileCard.vue';
 import AdCard from '@/components/AdCard.vue';
-import Settings from '@/components/Settings.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -125,9 +178,86 @@ export default {
     Reply,
     ProfileCard,
     AdCard,
-    Settings
   },
   data: () => ({
+    editMode: false,
+    valid: true,
+    editData: {
+      userId: null,
+      username: "",
+      publicEmail: "",
+      publicPhone: "",
+      publicAddress: "", 
+      description: "",
+      website: "",
+      facebook: "",
+      github: "",
+      linkedin: "",
+      youtube: ""
+    },
+    contentRules: [
+      v => !!v || 'Pole jest wymagane',
+      v => (v && v.length >= 10) || 'Pole musi zawierać minimum 10 znaków',
+    ],
+    emailRules: [
+      v => /.+@.+\..+/.test(v) || v == undefined || 'E-mail musi być poprawny',
+    ],
+    websiteRules: [
+      // v => (v.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g !== null),
+      v => {
+        if (v == undefined || v.length == 0) return true;
+        try {
+          new URL(v);
+        } catch (_) {
+          return "Adres URL musi być poprawny";  
+        }
+        return true;
+      }
+    ],
+    linkedinRules: [
+      v => {
+        if (v == undefined || v.length == 0) return true;
+        try {
+          let url = new URL(v);
+          return !!url.hostname.match(/linkedin.com/);
+        } catch (_) {
+          return "Adres URL musi być poprawny";  
+        }
+      }
+    ],
+    facebookRules: [
+      v => {
+        if (v == undefined || v.length == 0) return true;
+        try {
+          let url = new URL(v);
+          return !!url.hostname.match(/facebook.com/);
+        } catch (_) {
+          return "Adres URL musi być poprawny";  
+        }
+      }
+    ],
+    githubRules: [
+      v => {
+        if (v == undefined || v.length == 0) return true;
+        try {
+          let url = new URL(v);
+          return !!url.hostname.match(/github.com/);
+        } catch (_) {
+          return "Adres URL musi być poprawny";  
+        }
+      }
+    ],
+    youtubeRules: [
+      v => {
+        if (v == undefined || v.length == 0) return true;
+        try {
+          let url = new URL(v);
+          return !!url.hostname.match(/youtube.com/);
+        } catch (_) {
+          return false;  
+        }
+      }
+    ],
     breadcrumbs: [
       {
         text: 'Strona główna',
@@ -142,8 +272,41 @@ export default {
     ],
     pagePosts: 1,
     pageReplies: 1,
-    tab: 0
+    tab: 0,
   }),
+  methods: {
+    enableEditMode() {
+      if (this.loggedIn && (this.userData['@id'].match(/\d+/)[0] == this.currentUser || this.isAdmin)) {
+        this.editData.userId = this.$route.path.match(/\d+/)[0]
+        this.editData.username = this.userData.username
+        this.editData.publicEmail = this.userData.publicEmail
+        this.editData.publicPhone = this.userData.publicPhone
+        this.editData.publicAddress = this.userData.publicAddress
+        this.editData.description = this.userData.description
+        this.editData.website = this.userData.website
+        this.editData.facebook = this.userData.facebook
+        this.editData.github = this.userData.github
+        this.editData.linkedin = this.userData.linkedin
+        this.editData.youtube = this.userData.youtube
+        this.editMode = true
+      } else {
+        this.$store.dispatch('addNotification', {
+          type: 'error',
+          message: 'Nie masz uprawnień do edytowania tego profilu.',
+        })
+      }
+    },
+    disableEditMode() {
+      this.editMode = false
+    },
+    sendData() {
+      if (this.loggedIn && (this.userData['@id'].match(/\d+/)[0] == this.currentUser || this.isAdmin)) {      
+        if (this.$refs.userProfileForm.validate()) {
+          this.$store.dispatch('editUserData', this.editData).then((value) => console.log(value))
+        }
+      }
+    }
+  },
   computed: mapGetters(['userData', 'loggedIn', 'currentUser', 'isAdmin', 'userPosts', 'userReplies', 'paginationLengthUserPosts', 'paginationLengthUserReplies']),
   mounted () {
       this.$store.dispatch('getUserData', this.$route.path)

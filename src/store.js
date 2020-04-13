@@ -32,7 +32,7 @@ export default new Vuex.Store({
     paginationLengthUserPosts: 1,
     paginationLengthUserReplies: 1,
     token: localStorage.getItem('access_token') || null,
-    isAdmin: false,
+    isAdmin: localStorage.getItem('access_token') && jwt_decode(localStorage.getItem('access_token')).roles.includes('ROLE_ADMIN'),
     currentUser: localStorage.getItem('current_user') || null,
     showRegisterForm: false,
     showLoginForm: false,
@@ -112,7 +112,7 @@ export default new Vuex.Store({
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_USER: (state, user, admin) => {
+    SET_USER: (state, { user, admin }) => {
       state.isAdmin = admin
       state.currentUser = user
     },
@@ -189,7 +189,11 @@ export default new Vuex.Store({
       axios.get('/api/users/' + user_id.match(/\d+/)[0],).then(response => {
         commit('GET_USER_DATA', response.data)
       }).catch(() => {
-        window.location = '/404'
+        // window.location = '/404'
+        this.dispatch('addNotification', {
+          type: 'error',
+          message: 'Błąd! Nie udało się pobrać danych użytkownika.',
+        })
       })
     },
     getUserPosts ({ commit, state }, { user_id, page }) {
@@ -261,7 +265,7 @@ export default new Vuex.Store({
         state.loadingLogin = false
         const token = response.data.token
         const tokenData = jwt_decode(token)      
-        commit('SET_USER', tokenData.id, tokenData.roles.includes('ROLE_ADMIN'))
+        commit('SET_USER', { user: tokenData.id, admin: tokenData.roles.includes('ROLE_ADMIN') })
         localStorage.setItem('access_token', token)
         localStorage.setItem('current_user', tokenData.id)
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
@@ -333,7 +337,7 @@ export default new Vuex.Store({
       localStorage.removeItem('access_token')
       localStorage.removeItem('current_user')
       commit('SET_TOKEN', null)
-      commit('SET_USER', null)
+      commit('SET_USER', { user: null, admin: null })
     },
     deletePost ({ state, commit }, id) {
       axios.delete('/api/posts/' + id.match(/\d+/)[0]).then(response => {
@@ -437,6 +441,23 @@ export default new Vuex.Store({
             message: 'Błąd! Nie udało się edytować ogłoszenia.',
           })
         })      
+      }
+    },
+    editUserData({ state, commit }, userData) {
+      if (state.token && state.currentUser) {
+        axios.put('/api/users/'+userData.userId, userData).then(response => {
+          this.dispatch('getUserData', userData.userId)
+          this.dispatch('addNotification', {
+            type: 'success',
+            message: 'Profil użytkownika został zmieniony.',
+            timeout: 5000
+          })
+        }).catch(error => {
+          this.dispatch('addNotification', {
+            type: 'error',
+            message: 'Błąd! Nie udało się zmienić danych użytkownika.',
+          })
+        })
       }
     },
     sendReply ({ state, commit }, reply) {
