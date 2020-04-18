@@ -347,12 +347,11 @@ export default new Vuex.Store({
         })
         router.push('/')
         commit('GET_POSTS', this.state.posts.filter(post => post['@id'] !== id))
-      }).catch((error) => {
+      }).catch(() => {
         this.dispatch('addNotification', {
           type: 'error',
           message: 'Błąd! Nie udało się usunąć ogłoszenia',
         })
-        console.log(error)
       })
     },
     deleteReply ({ state, commit }, reply) {
@@ -362,7 +361,7 @@ export default new Vuex.Store({
           message: 'Pomyślnie usunięto wpis',
         })
         this.dispatch('getPostData', reply.postId)
-      }).catch((error) => {
+      }).catch(() => {
         this.dispatch('addNotification', {
           type: 'error',
           message: 'Błąd! Nie udało się usunąć odpowiedzi.',
@@ -370,7 +369,6 @@ export default new Vuex.Store({
       })
     },
     setNewPostCategory ({ commit, state }, category) {
-      console.log(category)
       commit('SET_NEW_POST_CATEGORY', category)
       this.dispatch('createPost', state.newPost)
     },
@@ -469,7 +467,7 @@ export default new Vuex.Store({
           type: 'success',
           message: 'Pomyślnie dodano nowy wpis',
         })
-      }).catch(error => {
+      }).catch(() => {
         this.dispatch('addNotification', {
           type: 'error',
           message: 'Błąd! Nie udało się wysłać odpowiedzi.',
@@ -483,19 +481,20 @@ export default new Vuex.Store({
         this.dispatch('getPostData', reply.post)
         this.dispatch('addNotification', {
           type: 'success',
-          message: 'Twój wpis został pomyślnie edytowany',
+          message: 'Twój wpis został pomyślnie edytowany'
         })
-      }).catch(error => {
+      }).catch(() => {
         this.dispatch('addNotification', {
           type: 'error',
-          message: 'Błąd! Nie udało się edytować odpowiedzi!',
+          message: 'Błąd! Nie udało się edytować odpowiedzi!'
         })
       })
     },
-    // setCategory ({ state, commit }, category) {
-    //   commit('SET_CURRENT_CATEGORY', category)
-    //   this.dispatch('getPosts', category)
-    // }
+    // getTags ({ commit, state }, tag) {
+    //   axios.get('/api/tags/').then(response => {
+    //     commit('GET_TAGS_DATA', response.data)
+    //   })
+    // },
     addNotification ({ state, commit }, notification ) {
       commit('PUSH_NOTIFICATION', notification)
     },

@@ -47,9 +47,9 @@
                     </div>
                     <v-divider class="my-3" />
                     <div class="body-2 pb-3 font-weight-medium">Opis</div>
-                    <v-textarea v-if="editMode" filled name="description" v-model="editData.descripion" placeholder="Tutaj wpisz tekst" />
-                    <div v-else class="font-weight-regular pb-2">
-                      {{ userData.descripion }}
+                    <v-textarea v-if="editMode" filled name="description" v-model="editData.description" placeholder="Tutaj wpisz tekst" />
+                    <div v-else class="font-weight-regular pb-2 font-italic">
+                      {{ userData.description || "brak" }}
                     </div>
                     <v-row :no-gutters="!editMode">
                         <v-col v-if="editMode" cols="12" sm="6">
@@ -58,41 +58,76 @@
                         </v-col>
                         <v-col cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Nazwa firmy</div>
-                          <div v-if="!editMode" class="font-weight-regular pb-2"></div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2 font-italic">{{ userData.login }}</div>
                           <v-text-field filled v-model="editData.username" prepend-inner-icon="mdi-card-account-details-outline" name="companyName" placeholder="Nazwa firmy" v-else></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Adres firmy</div>
-                          <div v-if="!editMode" class="font-weight-regular pb-2">
-                              {{ userData.publicAddress }}
+                          <div v-if="!editMode" class="font-weight-regular pb-2 font-italic">
+                              {{ userData.publicAddress || "brak" }}
                           </div>
                           <v-text-field prepend-inner-icon="mdi-domain" v-model="editData.publicAddress" filled name="publicAddress" placeholder="Adres" v-else>{{ userData.publicAddress }}</v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Numer telefonu</div>
-                          <div v-if="!editMode" class="font-weight-regular pb-2">
-                              {{ userData.publicPhone }}
+                          <div v-if="!editMode" class="font-weight-regular pb-2 font-italic">
+                              {{ userData.publicPhone || "brak" }}
                           </div>
                           <v-text-field filled v-model="editData.publicPhone" prepend-inner-icon="mdi-phone" name="publicPhone" placeholder="Numer telefonu" v-else>{{ userData.publicPhone }}</v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Adres e-mail</div>
-                          <div v-if="!editMode" class="font-weight-regular pb-2">{{ userData.publicEmail }}</div>
+                          <div v-if="!editMode" class="font-weight-regular pb-2 font-italic">{{ userData.publicEmail || "brak" }}</div>
                           <v-text-field :rules="emailRules" v-model="editData.publicEmail" filled prepend-inner-icon="mdi-email" name="publicEmail" placeholder="Adres emails" v-else>{{ userData.publicEmail }}</v-text-field>
                         </v-col>
-                        <v-col v-if="!editMode" cols="12" sm="6">
+                        <v-col cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Słowa kluczowe</div>
-                          <v-chip-group>
+                          <v-chip-group v-if="!editMode">
                               <v-chip small class="mr-1">HTML</v-chip>
                               <v-chip small class="mr-1">CSS</v-chip>
                               <v-chip small class="mr-1">PHP</v-chip>
                               <v-chip small class="mr-1">Laravel</v-chip>
                               <v-chip small class="mr-1">REST API</v-chip>
                           </v-chip-group>
+                          <tag-selector v-else filled prepend-inner-icon="mdi-tag" placeholder="Słowa kluczowe" />
                         </v-col>
                         <v-col v-if="!editMode" cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Odnośniki</div>
-                          <div class="font-weight-regular pb-2">FB</div>
+                          <div class="font-weight-regular pb-2">
+                            <div v-if="userData.website || userData.facebook || userData.twitter || userData.github || userData.youtube">
+                              <a v-if="userData.website" :href="userData.website">
+                                <v-btn icon>
+                                  <v-icon color="blue">mdi-earth</v-icon>
+                                </v-btn>
+                              </a>
+                              <a v-if="userData.facebook" :href="userData.facebook">
+                                <v-btn icon>
+                                  <v-icon color="primary">mdi-facebook</v-icon>
+                                </v-btn>
+                              </a>
+                              <a v-if="userData.twitter" :href="userData.twitter">
+                                <v-btn icon>
+                                  <v-icon color="light-blue">mdi-twitter</v-icon>
+                                </v-btn>
+                              </a>
+                              <a v-if="userData.linkedin" :href="userData.linkedin">
+                                <v-btn icon>
+                                  <v-icon color="indigo">mdi-linkedin</v-icon>
+                                </v-btn>
+                              </a>
+                              <a v-if="userData.github" :href="userData.github">
+                                <v-btn icon>
+                                  <v-icon color="black">mdi-github</v-icon>
+                                </v-btn>
+                              </a>
+                              <a v-if="userData.youtube" :href="userData.youtube">
+                                <v-btn icon>
+                                  <v-icon color="red">mdi-youtube</v-icon>
+                                </v-btn>
+                              </a>
+                            </div>
+                            <i v-else>brak</i>
+                          </div>
                         </v-col>
                         <v-col v-if="editMode" cols="12" sm="6">
                           <div class="body-2 py-3 font-weight-medium">Strona WWW</div>
@@ -139,24 +174,34 @@
               <v-tab>Odpowiedzi</v-tab>            
               <v-tabs-items v-model="tab" class="mt-2">
                 <v-tab-item>
-                    <v-skeleton-loader v-if="!userPosts" type="card@5" />
-                    <ad-card v-else v-for="post in userPosts" :key="post['@id']" :post="post" :link="{ name: 'post', params: { post_id: post['@id'].match(/\d+/)[0]}}" />
-                    <div class="text-center">
-                      <v-pagination
-                        v-model="pagePosts"
-                        :length="paginationLengthUserPosts"
-                      ></v-pagination>
+                    <v-skeleton-loader v-if="userPosts==undefined" type="card@5" />
+                    <div v-else-if="userPosts && userPosts.length > 0">
+                      <ad-card v-for="post in userPosts" :key="post['@id']" :post="post" :link="{ name: 'post', params: { post_id: post['@id'].match(/\d+/)[0]}}" />
+                      <div class="text-center">
+                        <v-pagination
+                          v-model="pagePosts"
+                          :length="paginationLengthUserPosts"
+                        />
+                      </div>
+                    </div>
+                    <div v-else class="d-block py-5 text-center grey lighten-2">
+                      <p class="title mt-2">Brak zleceń</p>
                     </div>
                 </v-tab-item>
                 <v-tab-item>
-                  <v-skeleton-loader v-if="!userReplies" type="card@5" />
-                  <reply v-else v-for="reply in userReplies" :key="reply['@id']" :reply="reply" :post="reply.post" />
-                  <div class="text-center">
-                      <v-pagination
-                        v-model="pageReplies"
-                        :length="paginationLengthUserReplies"
-                      ></v-pagination>
-                    </div>
+                  <v-skeleton-loader v-if="userReplies==undefined" type="card@5" />
+                  <div v-else-if="userReplies && userReplies.length > 0">
+                    <reply v-for="reply in userReplies" :key="reply['@id']" :reply="reply" :post="reply.post" />
+                    <div class="text-center">
+                        <v-pagination
+                          v-model="pageReplies"
+                          :length="paginationLengthUserReplies"
+                        />
+                      </div>
+                  </div>
+                  <div v-else class="d-block py-5 text-center grey lighten-2">
+                    <p class="title mt-2">Brak odpowiedzi</p>
+                  </div>
                 </v-tab-item>
               </v-tabs-items>
             </v-tabs>
@@ -166,34 +211,34 @@
 </template>
 
 <script>
-import ReplyForm from '@/components/ReplyForm.vue';
-import Reply from '@/components/Reply.vue';
-import ProfileCard from '@/components/ProfileCard.vue';
-import AdCard from '@/components/AdCard.vue';
-import { mapGetters } from 'vuex';
+import Reply from '@/components/Reply.vue'
+import ProfileCard from '@/components/ProfileCard.vue'
+import AdCard from '@/components/AdCard.vue'
+import TagSelector from '@/components/TagSelector.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    ReplyForm,
     Reply,
     ProfileCard,
     AdCard,
+    TagSelector
   },
   data: () => ({
     editMode: false,
     valid: true,
     editData: {
       userId: null,
-      username: "",
-      publicEmail: "",
-      publicPhone: "",
-      publicAddress: "", 
-      description: "",
-      website: "",
-      facebook: "",
-      github: "",
-      linkedin: "",
-      youtube: ""
+      username: '',
+      publicEmail: '',
+      publicPhone: '',
+      publicAddress: '', 
+      description: '',
+      website: '',
+      facebook: '',
+      github: '',
+      linkedin: '',
+      youtube: ''
     },
     contentRules: [
       v => !!v || 'Pole jest wymagane',
@@ -203,13 +248,12 @@ export default {
       v => /.+@.+\..+/.test(v) || v == undefined || 'E-mail musi być poprawny',
     ],
     websiteRules: [
-      // v => (v.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g !== null),
       v => {
         if (v == undefined || v.length == 0) return true;
         try {
           new URL(v);
         } catch (_) {
-          return "Adres URL musi być poprawny";  
+          return 'Adres URL musi być poprawny';  
         }
         return true;
       }
@@ -221,7 +265,7 @@ export default {
           let url = new URL(v);
           return !!url.hostname.match(/linkedin.com/);
         } catch (_) {
-          return "Adres URL musi być poprawny";  
+          return 'Adres URL musi być poprawny';  
         }
       }
     ],
@@ -232,7 +276,7 @@ export default {
           let url = new URL(v);
           return !!url.hostname.match(/facebook.com/);
         } catch (_) {
-          return "Adres URL musi być poprawny";  
+          return 'Adres URL musi być poprawny';  
         }
       }
     ],
@@ -243,7 +287,7 @@ export default {
           let url = new URL(v);
           return !!url.hostname.match(/github.com/);
         } catch (_) {
-          return "Adres URL musi być poprawny";  
+          return 'Adres URL musi być poprawny';  
         }
       }
     ],
@@ -275,7 +319,7 @@ export default {
     tab: 0,
   }),
   methods: {
-    enableEditMode() {
+    enableEditMode () {
       if (this.loggedIn && (this.userData['@id'].match(/\d+/)[0] == this.currentUser || this.isAdmin)) {
         this.editData.userId = this.$route.path.match(/\d+/)[0]
         this.editData.username = this.userData.username
@@ -296,13 +340,14 @@ export default {
         })
       }
     },
-    disableEditMode() {
+    disableEditMode () {
       this.editMode = false
     },
-    sendData() {
+    sendData () {
       if (this.loggedIn && (this.userData['@id'].match(/\d+/)[0] == this.currentUser || this.isAdmin)) {      
         if (this.$refs.userProfileForm.validate()) {
-          this.$store.dispatch('editUserData', this.editData).then((value) => console.log(value))
+          this.$store.dispatch('editUserData', this.editData)
+          this.editMode = false
         }
       }
     }
