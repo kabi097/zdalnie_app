@@ -8,7 +8,18 @@ import qs from 'qs'
 Vue.use(Vuex)
 axios.defaults.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:8000'
 
+const checkExpiredJWTPlugin = store => {
+  store.subscribe((mutation, state) => {
+    if (state.token) {
+      if (Date.now() >= jwt_decode(localStorage.getItem('access_token')).exp * 1000) {
+        store.dispatch('logout')
+      }
+    }
+  })
+}
+
 export default new Vuex.Store({
+  plugins: [checkExpiredJWTPlugin],
   state: {
     posts: [],
     postData: null,
@@ -181,7 +192,8 @@ export default new Vuex.Store({
     getPostData ({ commit, state }, post_id) {
       axios.get('/api/posts/' + post_id.match(/\d+/)[0],).then(response => {
         commit('GET_POST_DATA', response.data)
-      }).catch(() => {
+      }).catch((error) => {
+        // console.log(error)
         window.location = '/404'
       })
     },
@@ -264,7 +276,7 @@ export default new Vuex.Store({
       axios.post('/login', user).then(response => {
         state.loadingLogin = false
         const token = response.data.token
-        const tokenData = jwt_decode(token)      
+        const tokenData = jwt_decode(token)
         commit('SET_USER', { user: tokenData.id, admin: tokenData.roles.includes('ROLE_ADMIN') })
         localStorage.setItem('access_token', token)
         localStorage.setItem('current_user', tokenData.id)
