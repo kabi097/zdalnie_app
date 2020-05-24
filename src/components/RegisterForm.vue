@@ -52,7 +52,7 @@
                         </v-col>
                     </v-row>
                     <v-card-actions class="d-flex justify-end">
-                        <v-btn :disabled="loadingRegister || !valid" :loading="loadingRegister" color="primary" class="mr-4" @click="validate">Potwierdź</v-btn>
+                        <v-btn :disabled="!valid" color="primary" class="mr-4" @click="validate">Potwierdź</v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card-text>
@@ -66,7 +66,6 @@ export default {
     username: '',
     email: '',
     password: '',
-    // loadingRegister: false,
     passwordRepeat: '',
     nameRules: [
       v => !!v || 'Pole jest wymagane',
@@ -80,11 +79,6 @@ export default {
         v => v.length >= 8 || 'Hasło musi mieć co najmniej 8 znaków',
     ],
   }),
-  computed: {
-    loadingRegister () {
-      return this.$store.state.loadingRegister
-    }
-  },
   methods: {
     validate () {
       if (this.$refs.registerForm.validate()) {

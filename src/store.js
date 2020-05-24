@@ -50,7 +50,7 @@ export default new Vuex.Store({
     showSelectCategory: false,
     showAddForm: false,
     showCategoriesBrowser: false,
-    loadingRegister: false,
+    showWelcomeSettings: false,
     loadingLogin: false,
     newPostCategory: '',
     newPost: {
@@ -119,6 +119,9 @@ export default new Vuex.Store({
     },
     SET_NEW_POST_CATEGORY: (state, category) => {
       state.newPostCategory = category
+    },
+    SET_WELCOME_SETTINGS: (state, settings) => {
+      state.showWelcomeSettings = settings
     },
     SET_TOKEN: (state, token) => {
       state.token = token
@@ -256,23 +259,20 @@ export default new Vuex.Store({
       })
     },
     registerUser ({ commit, state }, user) {
-      state.loadingRegister = true
       axios.post('/api/users', user).then(response => {
-        state.loadingRegister = false
         this.dispatch('loginUser', {
           email: user.email,
-          password: user.password
+          password: user.password,
+          newUser: true
         })
       }).catch(error => {
         this.dispatch('addNotification', {
           type: 'error',
           message: 'Błąd! Nie udało się zarejestrować nowego użytkownika.',
         })
-        state.loadingRegister = false
       })
     },
     loginUser ({ commit, state }, user) {
-      state.loadingRegister = true
       axios.post('/login', user).then(response => {
         state.loadingLogin = false
         const token = response.data.token
@@ -282,12 +282,21 @@ export default new Vuex.Store({
         localStorage.setItem('current_user', tokenData.id)
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
         commit('SET_TOKEN', token)
-        this.dispatch('addNotification', {
-          type: 'success',
-          message: 'Zalogowano pomyślnie',
-        })
-        this.dispatch('toggleOverlay', false)
-        this.dispatch('createPost')
+        if (user.newUser) {
+          this.dispatch('addNotification', {
+            type: 'success',
+            message: 'Zarejestrowano pomyślnie',
+          })
+          this.dispatch('toggleOverlay', false)
+        } else {
+          this.dispatch('addNotification', {
+            type: 'success',
+            message: 'Zalogowano pomyślnie',
+          })
+          this.dispatch('toggleOverlay', false)
+          this.dispatch('openWelcomeSettings')
+          // this.dispatch('createPost')
+        }
       }).catch((error) => {
         this.dispatch('addNotification', {
           type: 'error',
@@ -301,6 +310,7 @@ export default new Vuex.Store({
       commit('SET_SELECT_CATEGORY', toggle)
       commit('SET_ADD_FORM', toggle)
       commit('SET_CATEGORIES_BROWSER', toggle)
+      commit('SET_WELCOME_SETTINGS', toggle)
     },
     openLoginForm ({ commit, state }) {
       commit('SET_FORM_LOGIN', true)
@@ -329,6 +339,12 @@ export default new Vuex.Store({
     },
     closeCategoriesBrowser ({ commit, state }) {
       commit('SET_CATEGORIES_BROWSER', false)
+    },
+    openWelcomeSettings ({ commit, state }) {
+      commit('SET_WELCOME_SETTINGS', true)
+    },
+    closeWelcomeSettings ({ commit, state }) {
+      commit('SET_WELCOME_SETTINGS', false)
     },
     setPage ({ commit, state }, page) {
       commit('SET_PAGE', page)

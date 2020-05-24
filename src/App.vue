@@ -54,7 +54,7 @@
     </v-app-bar>
     <v-content>
       <router-view></router-view>
-      <v-overlay :value="this.$store.state.showRegisterForm || this.$store.state.showLoginForm || this.$store.state.showSelectCategory || this.$store.state.showAddForm || this.$store.state.showCategoriesBrowser">
+      <v-overlay :value="this.$store.state.showRegisterForm || this.$store.state.showLoginForm || this.$store.state.showSelectCategory || this.$store.state.showAddForm || this.$store.state.showCategoriesBrowser || this.$store.state.showWelcomeSettings">
         <div class="d-sm-flex flex-sm-row-reverse">
           <v-btn
             icon
@@ -68,6 +68,7 @@
           <SelectCategory v-if="this.$store.state.showSelectCategory" />
           <AddForm popupMode :post="editPost" v-if="this.$store.state.showAddForm" />
           <CategoriesBrowser popupMode v-if="this.$store.state.showCategoriesBrowser" />
+          <WelcomeSettings popupMode v-if="this.$store.state.showWelcomeSettings" />
         </div>
       </v-overlay>
     </v-content>
@@ -85,6 +86,7 @@ import SelectCategory from '@/components/SelectCategory.vue'
 import AddForm from '@/components/AddForm.vue'
 import CategoriesBrowser from '@/components/CategoriesBrowser.vue'
 import NotificationList from '@/components/NotificationList.vue'
+import WelcomeSettings from '@/components/WelcomeSettings.vue'
 import axios from 'axios'
 import { mapState, mapGetters } from 'vuex'
 
@@ -96,7 +98,8 @@ export default {
     SelectCategory,
     AddForm,
     CategoriesBrowser,
-    NotificationList
+    NotificationList,
+    WelcomeSettings
   },
   data: () => ({
     showRegisterForm: true,
