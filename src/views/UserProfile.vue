@@ -232,7 +232,7 @@ export default {
       username: '',
       publicEmail: '',
       publicPhone: '',
-      publicAddress: '', 
+      publicAddress: '',
       description: '',
       website: '',
       facebook: '',
@@ -249,56 +249,56 @@ export default {
     ],
     websiteRules: [
       v => {
-        if (v == undefined || v.length == 0) return true;
+        if (v == undefined || v.length == 0) return true
         try {
-          new URL(v);
+          new URL(v)
         } catch (_) {
-          return 'Adres URL musi być poprawny';  
+          return 'Adres URL musi być poprawny'  
         }
-        return true;
+        return true
       }
     ],
     linkedinRules: [
       v => {
-        if (v == undefined || v.length == 0) return true;
+        if (v == undefined || v.length == 0) return true
         try {
-          let url = new URL(v);
-          return !!url.hostname.match(/linkedin.com/);
+          let url = new URL(v)
+          return !!url.hostname.match(/linkedin.com/)
         } catch (_) {
-          return 'Adres URL musi być poprawny';  
+          return 'Adres URL musi być poprawny'  
         }
       }
     ],
     facebookRules: [
       v => {
-        if (v == undefined || v.length == 0) return true;
+        if (v == undefined || v.length == 0) return true
         try {
-          let url = new URL(v);
-          return !!url.hostname.match(/facebook.com/);
+          let url = new URL(v)
+          return !!url.hostname.match(/facebook.com/)
         } catch (_) {
-          return 'Adres URL musi być poprawny';  
+          return 'Adres URL musi być poprawny'  
         }
       }
     ],
     githubRules: [
       v => {
-        if (v == undefined || v.length == 0) return true;
+        if (v == undefined || v.length == 0) return true
         try {
-          let url = new URL(v);
-          return !!url.hostname.match(/github.com/);
+          let url = new URL(v)
+          return !!url.hostname.match(/github.com/)
         } catch (_) {
-          return 'Adres URL musi być poprawny';  
+          return 'Adres URL musi być poprawny'  
         }
       }
     ],
     youtubeRules: [
       v => {
-        if (v == undefined || v.length == 0) return true;
+        if (v == undefined || v.length == 0) return true
         try {
-          let url = new URL(v);
-          return !!url.hostname.match(/youtube.com/);
+          let url = new URL(v)
+          return !!url.hostname.match(/youtube.com/)
         } catch (_) {
-          return false;  
+          return false  
         }
       }
     ],

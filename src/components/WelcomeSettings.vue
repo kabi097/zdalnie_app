@@ -2,7 +2,7 @@
     <v-container>
         <v-card light elevation="24">    
             <v-card-text>
-                <v-stepper> 
+                <v-stepper v-model="step"> 
                     <v-stepper-header>
                         <v-stepper-step step="1">
                             Rodzaj konta
@@ -19,18 +19,32 @@
                             Wybierz rodzaj konta:
                             <v-row align-content="center" justify="center">
                                 <v-col cols="12" sm="6">
-                                    <v-btn block class="mx-2" dark color="green darker-2">
+                                    <v-btn block class="mx-2" dark color="green darker-2" @click="config.business = false; step = 2">
                                         <v-icon left>mdi-account</v-icon>
                                         Konto osobiste
                                     </v-btn>
                                 </v-col>
                                 <v-col cols="12" sm="6">
-                                    <v-btn block class="mx-2" dark color="orange darker-2">
+                                    <v-btn block class="mx-2" dark color="orange darker-2" @click="config.business = true; step = 2">
                                         <v-icon left>mdi-domain</v-icon>
                                         Konto firmowe
                                     </v-btn>
                                 </v-col>
                             </v-row>
+                        </v-stepper-content>
+                        <v-stepper-content step="2">
+                            Wybierz obrazek profilowy:
+                            <v-row align-content="center" justify="center">
+                                <v-col cols="4">
+                                    nn
+                                </v-col>
+                            </v-row>
+                            <v-btn color="grey" @click="step = 1">
+                                <v-icon left>mdi-arrow-left</v-icon>Wróć
+                            </v-btn>
+                            <v-btn color="success" class="float-right" @click="step = 3">
+                                <v-icon left>mdi-arrow-right</v-icon>Dalej
+                            </v-btn>
                         </v-stepper-content>
                     </v-stepper-items>
                 </v-stepper>
@@ -41,6 +55,10 @@
 <script>
 export default {
   data: () => ({
+    step: 1,
+    config: {
+        business: null
+    },
     valid: true,
     username: '',
     email: '',
