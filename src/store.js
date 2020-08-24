@@ -172,9 +172,6 @@ export default new Vuex.Store({
         return notification.id != notificationToRemove.id
       })
     }
-    // SET_CURRENT_CATEGORY: (state, category) => {
-    //   state.currentCategory = category
-    // }
   },
   actions: {
     getPosts ({ state, commit }, category) {
@@ -294,7 +291,7 @@ export default new Vuex.Store({
             message: 'Zalogowano pomyślnie',
           })
           this.dispatch('toggleOverlay', false)
-          this.dispatch('openWelcomeSettings')
+          // this.dispatch('openWelcomeSettings')
           // this.dispatch('createPost')
         }
       }).catch((error) => {
