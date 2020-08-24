@@ -14,6 +14,10 @@ Projekt pracy inżynierskiej zrealizowany dla Politechniki Poznańskiej. Celem p
 - Specjalne uprawnienia dla administratora
 - Skrypt dodający przykładowe dane do bazy danych
 
+### Repozytoria
+Serwer REST API: [github.com/kabi097/zdalnie_api](https://github.com/kabi097/zdalnie_api)
+
+Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/zdalnie_app)
 
 ### Instrukcja
 
