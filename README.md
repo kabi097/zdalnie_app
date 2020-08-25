@@ -3,7 +3,7 @@
 Projekt pracy inżynierskiej zrealizowany dla Politechniki Poznańskiej. Celem projektu było zaprojektowanie i implementacja platformy internetowej służącej do publikowania ogłoszeń pracy zdalnej. Aplikację wykonano przy użyciu biblioteki API Platform (Symfony) oraz Vue.js (JavaScript). 
 
 ### Demo (video)
-<a href="https://vimeo.com/450289918" target="_blank"><img alt="Zobacz film" src="https://i.imgur.com/umqA1VB.png" width="700"></a>
+<a href="https://vimeo.com/450289918" target="_blank"><img alt="Zobacz film" src="https://i.imgur.com/eNlW9gE.png" width="700"></a>
 ![](https://kabi097.github.io/img/works/zdalnie@2x.jpg)
 ### Funkcje:
 - Wygodna przeglądarka ogłoszeń z obsługą filtrowania i paginacji wyników
